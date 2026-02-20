@@ -101,6 +101,30 @@ const quiz4: Quiz = {
       correctKey: 'b',
       explanation: 'Spring Data\'s "derived query" feature reads the method name: "findBy" = SELECT, "Email" = WHERE email = ?, "And" = AND, "ActiveTrue" = active = true. It generates the SQL automatically. No @Query annotation needed for common queries.',
     },
+    {
+      id: 'q9',
+      question: 'In Jest you write expect(result).toBe(5). What is the JUnit 5 equivalent?',
+      options: [
+        { key: 'a', text: 'assert(result == 5)' },
+        { key: 'b', text: 'assertEquals(result, 5)' },
+        { key: 'c', text: 'assertEquals(5, result)' },
+        { key: 'd', text: 'expect(result).toBe(5)' },
+      ],
+      correctKey: 'c',
+      explanation: 'JUnit 5 uses assertEquals(expected, actual) — note the order is reversed compared to Jest! Expected value comes first, actual second. This is a common gotcha when switching from Jest to JUnit. Other assertions: assertTrue(), assertNull(), assertThrows().',
+    },
+    {
+      id: 'q10',
+      question: 'What is Mockito\'s when(mock.method()).thenReturn(value) equivalent to in Jest?',
+      options: [
+        { key: 'a', text: 'jest.fn().mockReturnValue(value)' },
+        { key: 'b', text: 'jest.mock("./module")' },
+        { key: 'c', text: 'jest.spyOn(obj, "method")' },
+        { key: 'd', text: 'expect(mock).toHaveBeenCalled()' },
+      ],
+      correctKey: 'a',
+      explanation: 'when(mock.method()).thenReturn(value) configures a mock to return a specific value — just like jest.fn().mockReturnValue(value). Mockito\'s verify(mock).method() is equivalent to Jest\'s expect(mock).toHaveBeenCalled().',
+    },
   ],
 };
 

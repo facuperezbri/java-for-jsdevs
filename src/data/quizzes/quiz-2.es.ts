@@ -101,6 +101,30 @@ const quiz2: Quiz = {
       correctKey: 'b',
       explanation: 'Los campos Java se declaran a nivel de clase con sus tipos: "private String name;" — antes del constructor. Dentro del constructor los asignas: "this.name = name;" La declaración e inicialización son separadas, a diferencia de JS donde puedes hacer ambas en el constructor.',
     },
+    {
+      id: 'q9',
+      question: '¿Cómo se compara un enum Java con un union type de TypeScript como type Color = "RED" | "GREEN" | "BLUE"?',
+      options: [
+        { key: 'a', text: 'Son idénticos' },
+        { key: 'b', text: 'Los enums Java son su propio tipo y pueden tener métodos y campos' },
+        { key: 'c', text: 'Los unions de TypeScript son más poderosos que los enums de Java' },
+        { key: 'd', text: 'Los enums de Java solo pueden contener valores string' },
+      ],
+      correctKey: 'b',
+      explanation: 'Los enums Java son clases reales — cada constante es una instancia de objeto. Pueden tener constructores, campos y métodos (ej. enum HttpStatus { OK(200, "OK"); ... }). Los union types de TypeScript se borran en runtime y no pueden contener datos ni comportamiento.',
+    },
+    {
+      id: 'q10',
+      question: '¿Qué retorna llamar .ordinal() en una constante de enum Java?',
+      options: [
+        { key: 'a', text: 'El nombre de la constante como String' },
+        { key: 'b', text: 'El hash code de la constante' },
+        { key: 'c', text: 'La posición base-cero en el orden de declaración' },
+        { key: 'd', text: 'El número total de constantes del enum' },
+      ],
+      correctKey: 'c',
+      explanation: 'ordinal() retorna el índice base-0 de la constante enum en su orden de declaración. Para enum Day { MON, TUE, WED }, MON.ordinal() = 0, TUE.ordinal() = 1, WED.ordinal() = 2. Usa .name() para obtener el nombre como String.',
+    },
   ],
 };
 

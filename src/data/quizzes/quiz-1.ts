@@ -87,7 +87,7 @@ const quiz1: Quiz = {
         { key: 'd', text: 'decimal' },
       ],
       correctKey: 'c',
-      explanation: '"double" is preferred for most decimal calculations. "float" has less precision. "int" can only hold whole numbers. "decimal" is not a Java primitive type (though BigDecimal exists for exact money calculations).',
+      explanation: '"double" is preferred for most decimal calculations. "float" has less precision. "int" can only hold whole numbers. "decimal" is not a Java primitive type. Important note: in production code, double should NOT be used for money due to rounding errors (0.1 + 0.2 != 0.3). Real financial code uses BigDecimal for exact calculations.',
     },
     {
       id: 'q8',

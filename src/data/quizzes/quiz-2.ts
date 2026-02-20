@@ -101,6 +101,30 @@ const quiz2: Quiz = {
       correctKey: 'b',
       explanation: 'Java fields are declared at the class level with their types: "private String name;" — before the constructor. Inside the constructor you assign them: "this.name = name;" The declaration and initialization are separate, unlike JS where you can do both in the constructor.',
     },
+    {
+      id: 'q9',
+      question: 'How does a Java enum compare to a TypeScript union type like type Color = "RED" | "GREEN" | "BLUE"?',
+      options: [
+        { key: 'a', text: 'They are identical' },
+        { key: 'b', text: 'Java enums are their own type and can have methods and fields' },
+        { key: 'c', text: 'TypeScript unions are more powerful than Java enums' },
+        { key: 'd', text: 'Java enums can only hold string values' },
+      ],
+      correctKey: 'b',
+      explanation: 'Java enums are real classes — each constant is an object instance. They can have constructors, fields, and methods (e.g., enum HttpStatus { OK(200, "OK"); ... }). TypeScript union types are erased at runtime and cannot hold data or behavior.',
+    },
+    {
+      id: 'q10',
+      question: 'What does calling .ordinal() on a Java enum constant return?',
+      options: [
+        { key: 'a', text: 'The name of the constant as a String' },
+        { key: 'b', text: 'The hash code of the constant' },
+        { key: 'c', text: 'The zero-based position in the declaration order' },
+        { key: 'd', text: 'The total number of enum constants' },
+      ],
+      correctKey: 'c',
+      explanation: 'ordinal() returns the 0-based index of the enum constant in its declaration order. For enum Day { MON, TUE, WED }, MON.ordinal() = 0, TUE.ordinal() = 1, WED.ordinal() = 2. Use .name() to get the String name instead.',
+    },
   ],
 };
 
