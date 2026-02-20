@@ -111,6 +111,32 @@ var message = "Hello"; // inferred as String
             caption: 'Java var is syntactic sugar — types are still static, just inferred',
           },
         },
+        {
+          id: 'c4',
+          title: 'final — Java\'s const',
+          explanation:
+            'Java\'s "final" keyword is the equivalent of JavaScript\'s "const" — it prevents reassignment. Like const in JS, final on an object reference doesn\'t make the object immutable.',
+          codeExample: {
+            javascript: `// JS: const prevents reassignment
+const MAX = 100;
+// MAX = 200; // TypeError!
+
+const user = { name: "Alice" };
+user.name = "Bob"; // allowed! const ≠ immutable`,
+            java: `// Java: final prevents reassignment
+final int MAX = 100;
+// MAX = 200; // COMPILE ERROR!
+
+final List<String> names = new ArrayList<>();
+names.add("Alice"); // allowed! final ≠ immutable
+// names = new ArrayList<>(); // COMPILE ERROR!`,
+            caption: 'final = const — prevents reassignment, but does NOT make objects immutable',
+          },
+          callout: {
+            type: 'gotcha',
+            text: 'Just like const in JS, final in Java only prevents reassignment of the variable. You can still mutate the object it points to (add items to a list, change fields, etc.).',
+          },
+        },
       ],
       translationDrills: [
         {
@@ -255,6 +281,101 @@ greet("Bob", "Hi");       // Hi, Bob!`,
             caption: 'Overloading lets you have multiple versions of a method with different parameter types',
           },
         },
+        {
+          id: 'c4',
+          title: 'static vs Instance Methods',
+          explanation:
+            'In Java, "static" means "belongs to the class, not to an instance". Static methods are called on the class itself (like module-level functions in JS), while instance methods are called on objects.',
+          codeExample: {
+            javascript: `// JS: module functions vs instance methods
+// Module-level function (like static)
+export function calculateTax(amount) {
+  return amount * 0.21;
+}
+
+// Instance method
+class Calculator {
+  add(a, b) { return a + b; }
+}
+
+const calc = new Calculator();
+calc.add(1, 2);       // called on instance`,
+            java: `// Java: static vs instance
+public class MathUtils {
+  // Static: called on the CLASS
+  public static int square(int n) {
+    return n * n;
+  }
+
+  // Instance: called on an OBJECT
+  public int add(int a, int b) {
+    return a + b;
+  }
+}
+
+// Static call — no object needed:
+MathUtils.square(5);          // 25
+
+// Instance call — need an object:
+MathUtils calc = new MathUtils();
+calc.add(1, 2);               // 3`,
+            caption: 'static methods: ClassName.method() | instance methods: object.method()',
+          },
+          challenge: {
+            id: 'ch1-2-2',
+            type: 'fill-blank',
+            prompt: 'Complete this static method call:',
+            code: `public class StringUtils {
+  public static String reverse(String s) {
+    return new StringBuilder(s).reverse().toString();
+  }
+}
+
+// Call the static method:
+String result = ___BLANK_1___.___BLANK_2___("hello");`,
+            blanks: [
+              { id: 'b1', expected: ['StringUtils'], hint: 'class name' },
+              { id: 'b2', expected: ['reverse'], hint: 'method name' },
+            ],
+            explanation: 'Static methods are called on the class name: StringUtils.reverse("hello"). No need to create an instance with "new" — the method belongs to the class itself.',
+          },
+        },
+        {
+          id: 'c5',
+          title: 'Packages & Imports',
+          explanation:
+            'Java organizes code into packages (like folders/modules in JS). Each file declares its package, and you import classes from other packages — similar to ES module imports.',
+          codeExample: {
+            javascript: `// JS: ES modules
+// file: src/utils/math.js
+export function add(a, b) { return a + b; }
+
+// file: src/app.js
+import { add } from './utils/math.js';
+import axios from 'axios'; // from node_modules`,
+            java: `// Java: packages & imports
+// file: src/main/java/com/example/utils/MathUtils.java
+package com.example.utils;
+
+public class MathUtils {
+  public static int add(int a, int b) { return a + b; }
+}
+
+// file: src/main/java/com/example/App.java
+package com.example;
+
+import com.example.utils.MathUtils;  // like import from
+import java.util.ArrayList;          // from standard library
+
+ArrayList<String> list = new ArrayList<>();
+int sum = MathUtils.add(1, 2);`,
+            caption: 'package = folder path, import = ES module import. Convention: reverse domain (com.company.project)',
+          },
+          callout: {
+            type: 'info',
+            text: 'Java uses reverse domain name convention for packages: com.google.maps, org.apache.commons. This guarantees uniqueness — like npm scoped packages (@google/maps).',
+          },
+        },
       ],
       translationDrills: [
         {
@@ -266,14 +387,14 @@ greet("Bob", "Hi");       // Hi, Bob!`,
   ___SLOT_5___ a * b;
 }`,
           slots: [
-            { id: 'slot-1', expected: 'int' },
+            { id: 'slot-1', expected: 'static' },
             { id: 'slot-2', expected: 'int' },
             { id: 'slot-3', expected: 'int' },
             { id: 'slot-4', expected: 'int' },
             { id: 'slot-5', expected: 'return' },
           ],
-          tokenBank: ['int', 'int', 'int', 'int', 'return', 'void', 'String', 'function'],
-          explanation: 'Java methods need a return type before the method name, and each parameter needs its own type declaration. The "return" keyword works the same as in JS.',
+          tokenBank: ['static', 'int', 'int', 'int', 'return', 'void', 'String', 'function'],
+          explanation: 'Java methods need the "static" keyword for class-level methods, a return type before the method name, and each parameter needs its own type declaration. The "return" keyword works the same as in JS.',
         },
       ],
       exercises: [
@@ -383,6 +504,91 @@ for (String fruit : fruits) {
             caption: 'Java\'s enhanced for loop uses a colon (:) where JS uses "of"',
           },
         },
+        {
+          id: 'c4',
+          title: 'Switch Statements',
+          explanation:
+            'Java\'s classic switch works like JavaScript\'s but with stricter types. Java 14+ also introduced switch expressions with arrow syntax for cleaner code.',
+          codeExample: {
+            javascript: `// JS switch
+switch (day) {
+  case "MON":
+  case "TUE":
+    console.log("Early week");
+    break;
+  case "FRI":
+    console.log("TGIF!");
+    break;
+  default:
+    console.log("Other day");
+}`,
+            java: `// Java classic switch (same as JS)
+switch (day) {
+  case "MON":
+  case "TUE":
+    System.out.println("Early week");
+    break;
+  case "FRI":
+    System.out.println("TGIF!");
+    break;
+  default:
+    System.out.println("Other day");
+}
+
+// Java 14+ switch expression (modern):
+String result = switch (day) {
+  case "MON", "TUE" -> "Early week";
+  case "FRI" -> "TGIF!";
+  default -> "Other day";
+};`,
+            caption: 'Java 14+ arrow switch: no break needed, can return values directly',
+          },
+          callout: {
+            type: 'info',
+            text: 'Java switch didn\'t support String until Java 7. Before that, only int/char/enum were allowed. The modern arrow syntax (Java 14+) eliminates fall-through bugs entirely.',
+          },
+        },
+        {
+          id: 'c5',
+          title: 'Common String Methods',
+          explanation:
+            'Most JavaScript string methods have Java equivalents — some identical, some renamed. Here\'s a comparison of the most commonly used ones.',
+          codeExample: {
+            javascript: `// JS String methods
+str.includes("x")       // contains check
+str.slice(0, 5)          // substring
+str.split(",")           // split into array
+str.trim()               // remove whitespace
+str.startsWith("A")      // prefix check
+str.toUpperCase()        // to uppercase
+\`Hello \${name}\`          // template literal`,
+            java: `// Java String methods
+str.contains("x")           // includes → contains
+str.substring(0, 5)         // slice → substring
+str.split(",")              // same!
+str.trim()                  // same!
+str.startsWith("A")         // same!
+str.toUpperCase()           // same!
+String.format("Hello %s", name) // template → format
+// or: "Hello " + name           // concatenation`,
+            caption: 'Many methods are the same! Key difference: includes→contains, slice→substring, template literals→String.format',
+          },
+          challenge: {
+            id: 'ch1-3-1',
+            type: 'fill-blank',
+            prompt: 'Translate these JS string operations to Java:',
+            code: `String greeting = "  Hello, World!  ";
+String trimmed = greeting.___BLANK_1___();
+boolean hasHello = greeting.___BLANK_2___("Hello");
+String sub = greeting.___BLANK_3___(2, 7);`,
+            blanks: [
+              { id: 'b1', expected: ['trim'], hint: 'remove whitespace' },
+              { id: 'b2', expected: ['contains'], hint: 'JS: includes()' },
+              { id: 'b3', expected: ['substring'], hint: 'JS: slice()' },
+            ],
+            explanation: 'trim() is identical in both languages. JS includes() becomes Java contains(). JS slice() becomes Java substring(). Most string methods translate naturally!',
+          },
+        },
       ],
       predictOutputs: [
         {
@@ -440,7 +646,7 @@ if (x > 5) {
 const nums = [1, 2, 3];
 nums.push(4);        // easy!
 nums.push(5, 6);     // also fine
-console.log(nums.length); // 5`,
+console.log(nums.length); // 6`,
             java: `// Java arrays have fixed size
 int[] nums = {1, 2, 3};
 // nums is now permanently size 3

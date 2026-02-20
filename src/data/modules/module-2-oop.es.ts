@@ -38,8 +38,8 @@ const alice = new Person("Alice", 30);`,
             java: `// Clase Java (debe estar en Person.java)
 public class Person {
   // Campos declarados a nivel de clase con tipos
-  String name;
-  int age;
+  private String name;
+  private int age;
 
   // Constructor
   public Person(String name, int age) {
@@ -453,7 +453,6 @@ public class Circle extends Shape {
         {
           id: 'po2-4-1',
           code: `Circle c = new Circle(5.0);
-c.super("red");
 System.out.println(c.getColor());
 c.draw();
 c.highlight();`,
@@ -563,6 +562,40 @@ Integer n = numBox.getValue(); // ¡seguro en tipos!`,
             text: 'Los genéricos Java usan letras mayúsculas por convención: T (Type), E (Element), K (Key), V (Value), N (Number). Los verás en la biblioteca estándar.',
           },
         },
+        {
+          id: 'c3',
+          title: 'Records (Java 16+)',
+          explanation:
+            'Los records de Java son clases de datos inmutables que auto-generan el constructor, getters, equals(), hashCode() y toString(). Son ideales para DTOs y objetos de valor — similar a los tipos/interfaces de TypeScript.',
+          codeExample: {
+            javascript: `// TypeScript: tipo de datos simple
+type Point = { x: number; y: number };
+const p: Point = { x: 10, y: 20 };
+console.log(p.x);   // 10
+
+// O con una clase:
+class Point {
+  constructor(public x: number, public y: number) {}
+}`,
+            java: `// Java record — ¡una línea!
+record Point(int x, int y) {}
+
+// Auto-genera: constructor, getters, equals, hashCode, toString
+Point p = new Point(10, 20);
+System.out.println(p.x());     // 10 (getter, no campo)
+System.out.println(p);          // Point[x=10, y=20]
+
+// Los records son inmutables — sin setters
+// p.x = 30; // ERROR DE COMPILACIÓN
+
+// ¡Equivalente a escribir 50+ líneas de código de clase!`,
+            caption: 'Los records eliminan código repetitivo — una línea reemplaza constructor, getters, equals, hashCode, toString',
+          },
+          callout: {
+            type: 'tip',
+            text: 'Usa records para DTOs, respuestas de API y cualquier clase de "solo datos". Usa clases regulares cuando necesites mutabilidad, herencia o lógica personalizada más allá de contener datos simples.',
+          },
+        },
       ],
       exercises: [
         {
@@ -576,6 +609,182 @@ Integer n = numBox.getValue(); // ¡seguro en tipos!`,
           prompt: '¿Puedes poner un int (primitivo) directamente en un Box<int>? ¿Como new Box<int>(42)?',
           hint: 'Recuerda la distinción de Java entre primitivos y objetos',
           answer: '¡No! Los genéricos Java solo funcionan con tipos referencia (objetos), no primitivos. Usa la clase wrapper: Box<Integer> (I mayúscula). Java convertirá automáticamente "int" a "Integer" en la mayoría de casos (autoboxing), pero el parámetro de tipo debe ser Integer, no int.',
+        },
+      ],
+    },
+    {
+      id: 'lesson-2-6',
+      moduleId: 'module-2',
+      title: 'Enums',
+      estimatedMinutes: 12,
+      concepts: [
+        {
+          id: 'c1',
+          title: 'Enums básicos',
+          explanation:
+            'Los enums de Java definen un conjunto fijo de constantes — como los objetos "as const" o union types de TypeScript, pero con seguridad de tipos y más poderosos.',
+          codeExample: {
+            javascript: `// TypeScript: union type o const object
+type Color = "RED" | "GREEN" | "BLUE";
+
+// o:
+const Color = {
+  RED: "RED",
+  GREEN: "GREEN",
+  BLUE: "BLUE",
+} as const;
+
+let c: Color = "RED";
+// c = "PURPLE"; // error TS`,
+            java: `// Enum Java
+enum Color {
+  RED, GREEN, BLUE
+}
+
+Color c = Color.RED;
+// c = "RED";     // ERROR DE COMPILACIÓN — ¡no es un String!
+// c = Color.PURPLE; // ERROR DE COMPILACIÓN — ¡no existe!
+
+System.out.println(c);            // RED
+System.out.println(c.name());     // "RED" (String)
+System.out.println(c.ordinal());  // 0 (índice)`,
+            caption: 'Los enums Java son constantes con seguridad de tipos — no strings, no ints, sino su propio tipo',
+          },
+          challenge: {
+            id: 'ch2-6-1',
+            type: 'fill-blank',
+            prompt: 'Declara un enum Java para tallas de camiseta:',
+            code: `___BLANK_1___ Size {
+  ___BLANK_2___, MEDIUM, LARGE, XL
+}
+
+Size mySize = ___BLANK_3___;`,
+            blanks: [
+              { id: 'b1', expected: ['enum'], hint: 'palabra clave enum' },
+              { id: 'b2', expected: ['SMALL'], hint: 'primera constante' },
+              { id: 'b3', expected: ['Size.MEDIUM', 'Size.SMALL', 'Size.LARGE', 'Size.XL'], hint: 'NombreEnum.VALOR' },
+            ],
+            explanation: 'Los enums se declaran con la palabra clave "enum". Las constantes son MAYÚSCULAS por convención. Se acceden como NombreEnum.VALOR — ¡no son strings!',
+          },
+        },
+        {
+          id: 'c2',
+          title: 'Enums con campos y métodos',
+          explanation:
+            'A diferencia de TypeScript, los enums de Java pueden tener constructores, campos y métodos. Cada constante es en realidad una instancia de la clase enum — haciéndolos sorprendentemente poderosos.',
+          codeExample: {
+            javascript: `// TypeScript: parecido a enum con datos
+const HttpStatus = {
+  OK: { code: 200, message: "OK" },
+  NOT_FOUND: { code: 404, message: "Not Found" },
+  ERROR: { code: 500, message: "Server Error" },
+} as const;
+
+console.log(HttpStatus.OK.code); // 200`,
+            java: `// Enum Java con campos y métodos
+enum HttpStatus {
+  OK(200, "OK"),
+  NOT_FOUND(404, "Not Found"),
+  ERROR(500, "Server Error");
+
+  private final int code;
+  private final String message;
+
+  HttpStatus(int code, String message) {
+    this.code = code;
+    this.message = message;
+  }
+
+  public int getCode() { return code; }
+  public String getMessage() { return message; }
+}
+
+System.out.println(HttpStatus.OK.getCode());      // 200
+System.out.println(HttpStatus.NOT_FOUND.getMessage()); // Not Found`,
+            caption: 'Los enums Java pueden contener datos y comportamiento — cada constante es una instancia de objeto',
+          },
+        },
+        {
+          id: 'c3',
+          title: 'Enums con Switch',
+          explanation:
+            'Los enums se combinan naturalmente con sentencias switch. El compilador puede incluso advertirte si olvidas manejar un caso — algo que las verificaciones exhaustivas de TypeScript también hacen.',
+          codeExample: {
+            javascript: `// TypeScript switch exhaustivo
+type Season = "SPRING" | "SUMMER" | "FALL" | "WINTER";
+
+function describe(s: Season): string {
+  switch (s) {
+    case "SPRING": return "Flowers blooming";
+    case "SUMMER": return "Beach time";
+    case "FALL": return "Leaves falling";
+    case "WINTER": return "Snow!";
+  }
+}`,
+            java: `// Java enum + switch
+enum Season { SPRING, SUMMER, FALL, WINTER }
+
+String describe(Season s) {
+  return switch (s) {
+    case SPRING -> "Flowers blooming";
+    case SUMMER -> "Beach time";
+    case FALL -> "Leaves falling";
+    case WINTER -> "Snow!";
+    // ¡el compilador advierte si falta un caso!
+  };
+}`,
+            caption: 'Switch con enums da verificación de exhaustividad en compilación — el compilador detecta casos faltantes',
+          },
+        },
+      ],
+      translationDrills: [
+        {
+          id: 'td2-6-1',
+          jsCode: `const Priority = {
+  LOW: "LOW",
+  MEDIUM: "MEDIUM",
+  HIGH: "HIGH",
+};`,
+          javaTemplate: `___SLOT_1___ Priority {
+  ___SLOT_2___, ___SLOT_3___, ___SLOT_4___
+}`,
+          slots: [
+            { id: 'slot-1', expected: 'enum' },
+            { id: 'slot-2', expected: 'LOW' },
+            { id: 'slot-3', expected: 'MEDIUM' },
+            { id: 'slot-4', expected: 'HIGH' },
+          ],
+          tokenBank: ['enum', 'LOW', 'MEDIUM', 'HIGH', 'class', 'const', 'type', 'interface'],
+          explanation: 'Los enums Java usan la palabra clave "enum" y listan constantes sin valores. A diferencia de los objetos const de TypeScript, las constantes de enum Java son su propio tipo — no strings.',
+        },
+      ],
+      predictOutputs: [
+        {
+          id: 'po2-6-1',
+          code: `enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }
+
+Day d = Day.WED;
+System.out.println(d);
+System.out.println(d.ordinal());
+System.out.println(d.name().toLowerCase());`,
+          language: 'java',
+          expectedOutput: 'WED\n2\nwed',
+          explanation: 'println(d) imprime "WED" (el nombre de la constante). ordinal() retorna el índice base-0: MON=0, TUE=1, WED=2. name() retorna "WED" como String, y toLowerCase() lo convierte a "wed".',
+          hint: 'ordinal() es base cero. name() retorna el nombre de la constante como String.',
+        },
+      ],
+      exercises: [
+        {
+          id: 'e1',
+          prompt: '¿Cuándo usarías un enum Java en lugar de constantes String (como static final String RED = "RED")?',
+          hint: 'Piensa en seguridad de tipos y qué puede verificar el compilador',
+          answer: 'Los enums son seguros en tipos: un método que acepta Color solo puede recibir Color.RED/GREEN/BLUE — no cualquier String aleatorio. Con constantes String, podrías pasar "PURPLE" y el compilador no lo detectaría. Los enums también funcionan con verificación de exhaustividad en switch, tienen name()/ordinal() integrados, y pueden contener datos y métodos.',
+        },
+        {
+          id: 'e2',
+          prompt: '¿Pueden los enums Java implementar interfaces? ¿Cómo sería útil?',
+          hint: 'Piensa en enums con comportamiento',
+          answer: '¡Sí! Cada constante de enum puede implementar métodos de interfaz de forma diferente. Ejemplo: enum Operation implements Calculator { ADD { double calc(a,b) { return a+b; } }, SUBTRACT { ... } }. Esta es la versión Java del patrón strategy con enums — muy poderoso y seguro en tipos.',
         },
       ],
     },

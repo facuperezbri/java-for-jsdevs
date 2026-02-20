@@ -187,6 +187,39 @@ mvn package          # build JAR file
             caption: '"mvn install" = "npm install", "mvn spring-boot:run" = "npm start"',
           },
         },
+        {
+          id: 'c3',
+          title: 'Project Structure — Maven vs Node.js',
+          explanation:
+            'Maven enforces a standard project structure. Once you learn it, every Java project looks familiar — unlike Node.js where structure is entirely up to you.',
+          codeExample: {
+            javascript: `# Node.js project (flexible)
+my-app/
+├── src/             # your code
+├── test/            # tests
+├── package.json     # dependencies & scripts
+├── node_modules/    # installed packages
+├── .env             # environment variables
+└── dist/            # build output`,
+            java: `# Maven/Spring Boot project (standardized)
+my-app/
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/    # your code
+│   │   └── resources/
+│   │       └── application.properties  # config (.env equivalent)
+│   └── test/
+│       └── java/com/example/    # tests (mirrors main)
+├── pom.xml                      # package.json equivalent
+├── target/                      # build output (dist/)
+└── .mvn/                        # Maven wrapper`,
+            caption: 'Maven convention: src/main/java for code, src/test/java for tests, target/ for build output',
+          },
+          callout: {
+            type: 'tip',
+            text: 'The test directory mirrors the main directory structure. A class at com.example.UserService should have its test at com.example.UserServiceTest — same package, different root folder.',
+          },
+        },
       ],
       exercises: [
         {
@@ -493,6 +526,163 @@ public interface UserRepository
           prompt: 'What is the JpaRepository equivalent of a Prisma transaction?',
           hint: 'Spring has an annotation-based approach to transactions',
           answer: '@Transactional on a @Service method — Spring wraps the method in a database transaction, rolling back if an exception is thrown. Example: @Transactional public void transferMoney(...) { ... } — equivalent to prisma.$transaction([...]).',
+        },
+      ],
+    },
+    {
+      id: 'lesson-4-6',
+      moduleId: 'module-4',
+      title: 'Testing with JUnit',
+      estimatedMinutes: 12,
+      concepts: [
+        {
+          id: 'c1',
+          title: 'JUnit 5 — Java\'s Jest',
+          explanation:
+            'JUnit 5 is the standard testing framework for Java — like Jest for JavaScript. The concepts are nearly identical: write test methods, use assertions, run them automatically.',
+          codeExample: {
+            javascript: `// Jest test
+const { add } = require('./math');
+
+test('adds two numbers', () => {
+  expect(add(2, 3)).toBe(5);
+});
+
+test('throws on invalid input', () => {
+  expect(() => add(null, 3)).toThrow();
+});`,
+            java: `// JUnit 5 test
+import static org.junit.jupiter.api.Assertions.*;
+
+class MathTest {
+
+  @Test
+  void addsTwoNumbers() {
+    assertEquals(5, Math.add(2, 3));
+  }
+
+  @Test
+  void throwsOnInvalidInput() {
+    assertThrows(IllegalArgumentException.class,
+      () -> Math.add(null, 3));
+  }
+}`,
+            caption: '@Test = test(), assertEquals = expect().toBe(), assertThrows = expect().toThrow()',
+          },
+          challenge: {
+            id: 'ch4-6-1',
+            type: 'fill-blank',
+            prompt: 'Complete this JUnit test:',
+            code: `class CalculatorTest {
+  ___BLANK_1___
+  void testMultiply() {
+    Calculator calc = new Calculator();
+    ___BLANK_2___(12, calc.multiply(3, 4));
+  }
+}`,
+            blanks: [
+              { id: 'b1', expected: ['@Test'], hint: 'test annotation' },
+              { id: 'b2', expected: ['assertEquals'], hint: 'assertion method' },
+            ],
+            explanation: '@Test marks a method as a test case (like test() in Jest). assertEquals(expected, actual) checks that the values are equal (like expect(actual).toBe(expected) in Jest — note the argument order is reversed!).',
+          },
+        },
+        {
+          id: 'c2',
+          title: 'Test Lifecycle — @BeforeEach / @AfterEach',
+          explanation:
+            'JUnit has lifecycle hooks just like Jest. @BeforeEach runs before each test, @AfterEach runs after — identical to Jest\'s beforeEach() and afterEach().',
+          codeExample: {
+            javascript: `// Jest lifecycle
+let calculator;
+
+beforeEach(() => {
+  calculator = new Calculator();
+});
+
+afterEach(() => {
+  console.log("Test completed");
+});
+
+test('adds numbers', () => {
+  expect(calculator.add(1, 2)).toBe(3);
+});`,
+            java: `// JUnit 5 lifecycle
+class CalculatorTest {
+  private Calculator calculator;
+
+  @BeforeEach
+  void setUp() {
+    calculator = new Calculator();
+  }
+
+  @AfterEach
+  void tearDown() {
+    System.out.println("Test completed");
+  }
+
+  @Test
+  void addsNumbers() {
+    assertEquals(3, calculator.add(1, 2));
+  }
+}`,
+            caption: '@BeforeEach = beforeEach(), @AfterEach = afterEach(), @BeforeAll = beforeAll()',
+          },
+        },
+        {
+          id: 'c3',
+          title: 'Mockito — Java\'s jest.fn()',
+          explanation:
+            'Mockito is Java\'s most popular mocking library — equivalent to Jest\'s mock functions. Use it to isolate units by replacing dependencies with controlled fakes.',
+          codeExample: {
+            javascript: `// Jest mocking
+const userRepo = {
+  findById: jest.fn().mockReturnValue({ name: "Alice" }),
+};
+
+const service = new UserService(userRepo);
+const user = service.getUser(1);
+
+expect(user.name).toBe("Alice");
+expect(userRepo.findById).toHaveBeenCalledWith(1);`,
+            java: `// Mockito mocking
+@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
+
+  @Mock
+  UserRepository userRepo;  // jest.fn() equivalent
+
+  @InjectMocks
+  UserService service;      // auto-injects mocks
+
+  @Test
+  void getsUser() {
+    // when().thenReturn() = mockReturnValue()
+    when(userRepo.findById(1L))
+      .thenReturn(Optional.of(new User("Alice")));
+
+    User user = service.getUser(1L);
+
+    assertEquals("Alice", user.getName());
+    verify(userRepo).findById(1L);  // toHaveBeenCalledWith
+  }
+}`,
+            caption: '@Mock = jest.fn(), when().thenReturn() = mockReturnValue(), verify() = toHaveBeenCalledWith()',
+          },
+        },
+      ],
+      exercises: [
+        {
+          id: 'e1',
+          prompt: 'In Jest you write expect(value).toBe(expected). What is the JUnit 5 equivalent?',
+          hint: 'The argument order is different in JUnit!',
+          answer: 'assertEquals(expected, actual) — note the reversed order! JUnit puts expected first, actual second. Other assertions: assertTrue(condition), assertFalse(condition), assertNull(value), assertNotNull(value), assertThrows(Exception.class, () -> code).',
+        },
+        {
+          id: 'e2',
+          prompt: 'How does Mockito\'s when().thenReturn() compare to Jest\'s jest.fn().mockReturnValue()?',
+          hint: 'They do the same thing with different syntax',
+          answer: 'Both configure a mock to return a specific value when called. Jest: const fn = jest.fn().mockReturnValue("hello"). Mockito: when(mock.method()).thenReturn("hello"). The main difference: Mockito mocks are tied to specific method calls, making them more precise about what they stub.',
         },
       ],
     },

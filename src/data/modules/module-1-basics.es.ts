@@ -111,6 +111,32 @@ var message = "Hello"; // inferido como String
             caption: 'Java var es azúcar sintáctico — los tipos siguen siendo estáticos, solo inferidos',
           },
         },
+        {
+          id: 'c4',
+          title: 'final — El const de Java',
+          explanation:
+            'La palabra clave "final" de Java es el equivalente del "const" de JavaScript — previene la reasignación. Como const en JS, final en una referencia a objeto no hace el objeto inmutable.',
+          codeExample: {
+            javascript: `// JS: const previene reasignación
+const MAX = 100;
+// MAX = 200; // TypeError!
+
+const user = { name: "Alice" };
+user.name = "Bob"; // ¡permitido! const ≠ inmutable`,
+            java: `// Java: final previene reasignación
+final int MAX = 100;
+// MAX = 200; // ¡ERROR DE COMPILACIÓN!
+
+final List<String> names = new ArrayList<>();
+names.add("Alice"); // ¡permitido! final ≠ inmutable
+// names = new ArrayList<>(); // ¡ERROR DE COMPILACIÓN!`,
+            caption: 'final = const — previene reasignación, pero NO hace los objetos inmutables',
+          },
+          callout: {
+            type: 'gotcha',
+            text: 'Igual que const en JS, final en Java solo previene la reasignación de la variable. Puedes seguir mutando el objeto al que apunta (agregar items a una lista, cambiar campos, etc.).',
+          },
+        },
       ],
       translationDrills: [
         {
@@ -255,6 +281,101 @@ greet("Bob", "Hi");       // Hi, Bob!`,
             caption: 'La sobrecarga te permite tener múltiples versiones de un método con diferentes tipos de parámetros',
           },
         },
+        {
+          id: 'c4',
+          title: 'Métodos static vs de instancia',
+          explanation:
+            'En Java, "static" significa "pertenece a la clase, no a una instancia". Los métodos estáticos se llaman en la clase misma (como funciones a nivel de módulo en JS), mientras los métodos de instancia se llaman en objetos.',
+          codeExample: {
+            javascript: `// JS: funciones de módulo vs métodos de instancia
+// Función a nivel de módulo (como static)
+export function calculateTax(amount) {
+  return amount * 0.21;
+}
+
+// Método de instancia
+class Calculator {
+  add(a, b) { return a + b; }
+}
+
+const calc = new Calculator();
+calc.add(1, 2);       // llamado en instancia`,
+            java: `// Java: static vs instancia
+public class MathUtils {
+  // Static: se llama en la CLASE
+  public static int square(int n) {
+    return n * n;
+  }
+
+  // Instancia: se llama en un OBJETO
+  public int add(int a, int b) {
+    return a + b;
+  }
+}
+
+// Llamada estática — sin objeto necesario:
+MathUtils.square(5);          // 25
+
+// Llamada de instancia — necesitas un objeto:
+MathUtils calc = new MathUtils();
+calc.add(1, 2);               // 3`,
+            caption: 'métodos static: NombreClase.metodo() | métodos de instancia: objeto.metodo()',
+          },
+          challenge: {
+            id: 'ch1-2-2',
+            type: 'fill-blank',
+            prompt: 'Completa esta llamada a método estático:',
+            code: `public class StringUtils {
+  public static String reverse(String s) {
+    return new StringBuilder(s).reverse().toString();
+  }
+}
+
+// Llama al método estático:
+String result = ___BLANK_1___.___BLANK_2___("hello");`,
+            blanks: [
+              { id: 'b1', expected: ['StringUtils'], hint: 'nombre de la clase' },
+              { id: 'b2', expected: ['reverse'], hint: 'nombre del método' },
+            ],
+            explanation: 'Los métodos estáticos se llaman en el nombre de la clase: StringUtils.reverse("hello"). No necesitas crear una instancia con "new" — el método pertenece a la clase misma.',
+          },
+        },
+        {
+          id: 'c5',
+          title: 'Paquetes e imports',
+          explanation:
+            'Java organiza el código en paquetes (como carpetas/módulos en JS). Cada archivo declara su paquete, e importas clases de otros paquetes — similar a los imports de módulos ES.',
+          codeExample: {
+            javascript: `// JS: módulos ES
+// archivo: src/utils/math.js
+export function add(a, b) { return a + b; }
+
+// archivo: src/app.js
+import { add } from './utils/math.js';
+import axios from 'axios'; // de node_modules`,
+            java: `// Java: paquetes e imports
+// archivo: src/main/java/com/example/utils/MathUtils.java
+package com.example.utils;
+
+public class MathUtils {
+  public static int add(int a, int b) { return a + b; }
+}
+
+// archivo: src/main/java/com/example/App.java
+package com.example;
+
+import com.example.utils.MathUtils;  // como import from
+import java.util.ArrayList;          // de la biblioteca estándar
+
+ArrayList<String> list = new ArrayList<>();
+int sum = MathUtils.add(1, 2);`,
+            caption: 'package = ruta de carpeta, import = import de módulo ES. Convención: dominio inverso (com.empresa.proyecto)',
+          },
+          callout: {
+            type: 'info',
+            text: 'Java usa convención de nombre de dominio inverso para paquetes: com.google.maps, org.apache.commons. Esto garantiza unicidad — como paquetes con scope en npm (@google/maps).',
+          },
+        },
       ],
       translationDrills: [
         {
@@ -266,14 +387,14 @@ greet("Bob", "Hi");       // Hi, Bob!`,
   ___SLOT_5___ a * b;
 }`,
           slots: [
-            { id: 'slot-1', expected: 'int' },
+            { id: 'slot-1', expected: 'static' },
             { id: 'slot-2', expected: 'int' },
             { id: 'slot-3', expected: 'int' },
             { id: 'slot-4', expected: 'int' },
             { id: 'slot-5', expected: 'return' },
           ],
-          tokenBank: ['int', 'int', 'int', 'int', 'return', 'void', 'String', 'function'],
-          explanation: 'Los métodos Java necesitan un tipo de retorno antes del nombre del método, y cada parámetro necesita su propia declaración de tipo. La palabra clave "return" funciona igual que en JS.',
+          tokenBank: ['static', 'int', 'int', 'int', 'return', 'void', 'String', 'function'],
+          explanation: 'Los métodos Java necesitan la palabra clave "static" para métodos a nivel de clase, un tipo de retorno antes del nombre del método, y cada parámetro necesita su propia declaración de tipo. La palabra clave "return" funciona igual que en JS.',
         },
       ],
       exercises: [
@@ -383,6 +504,91 @@ for (String fruit : fruits) {
             caption: 'El bucle for mejorado de Java usa dos puntos (:) donde JS usa "of"',
           },
         },
+        {
+          id: 'c4',
+          title: 'Sentencias Switch',
+          explanation:
+            'El switch clásico de Java funciona como el de JavaScript pero con tipos más estrictos. Java 14+ también introdujo expresiones switch con sintaxis de flecha para código más limpio.',
+          codeExample: {
+            javascript: `// JS switch
+switch (day) {
+  case "MON":
+  case "TUE":
+    console.log("Early week");
+    break;
+  case "FRI":
+    console.log("TGIF!");
+    break;
+  default:
+    console.log("Other day");
+}`,
+            java: `// Java switch clásico (igual que JS)
+switch (day) {
+  case "MON":
+  case "TUE":
+    System.out.println("Early week");
+    break;
+  case "FRI":
+    System.out.println("TGIF!");
+    break;
+  default:
+    System.out.println("Other day");
+}
+
+// Expresión switch Java 14+ (moderno):
+String result = switch (day) {
+  case "MON", "TUE" -> "Early week";
+  case "FRI" -> "TGIF!";
+  default -> "Other day";
+};`,
+            caption: 'Switch con flecha Java 14+: sin break necesario, puede retornar valores directamente',
+          },
+          callout: {
+            type: 'info',
+            text: 'El switch de Java no soportaba String hasta Java 7. Antes, solo se permitían int/char/enum. La sintaxis moderna con flechas (Java 14+) elimina los bugs de fall-through por completo.',
+          },
+        },
+        {
+          id: 'c5',
+          title: 'Métodos comunes de String',
+          explanation:
+            'La mayoría de los métodos de string de JavaScript tienen equivalentes en Java — algunos idénticos, otros renombrados. Aquí va una comparación de los más usados.',
+          codeExample: {
+            javascript: `// Métodos de String en JS
+str.includes("x")       // verificar contenido
+str.slice(0, 5)          // subcadena
+str.split(",")           // dividir en array
+str.trim()               // eliminar espacios
+str.startsWith("A")      // verificar prefijo
+str.toUpperCase()        // a mayúsculas
+\`Hello \${name}\`          // template literal`,
+            java: `// Métodos de String en Java
+str.contains("x")           // includes → contains
+str.substring(0, 5)         // slice → substring
+str.split(",")              // ¡igual!
+str.trim()                  // ¡igual!
+str.startsWith("A")         // ¡igual!
+str.toUpperCase()           // ¡igual!
+String.format("Hello %s", name) // template → format
+// o: "Hello " + name           // concatenación`,
+            caption: '¡Muchos métodos son iguales! Diferencia clave: includes→contains, slice→substring, template literals→String.format',
+          },
+          challenge: {
+            id: 'ch1-3-1',
+            type: 'fill-blank',
+            prompt: 'Traduce estas operaciones de string de JS a Java:',
+            code: `String greeting = "  Hello, World!  ";
+String trimmed = greeting.___BLANK_1___();
+boolean hasHello = greeting.___BLANK_2___("Hello");
+String sub = greeting.___BLANK_3___(2, 7);`,
+            blanks: [
+              { id: 'b1', expected: ['trim'], hint: 'eliminar espacios' },
+              { id: 'b2', expected: ['contains'], hint: 'JS: includes()' },
+              { id: 'b3', expected: ['substring'], hint: 'JS: slice()' },
+            ],
+            explanation: 'trim() es idéntico en ambos lenguajes. includes() de JS se convierte en contains() de Java. slice() de JS se convierte en substring() de Java. ¡La mayoría de métodos de string se traducen naturalmente!',
+          },
+        },
       ],
       predictOutputs: [
         {
@@ -440,7 +646,7 @@ if (x > 5) {
 const nums = [1, 2, 3];
 nums.push(4);        // ¡fácil!
 nums.push(5, 6);     // también bien
-console.log(nums.length); // 5`,
+console.log(nums.length); // 6`,
             java: `// Los arrays de Java tienen tamaño fijo
 int[] nums = {1, 2, 3};
 // nums ahora tiene permanentemente tamaño 3
