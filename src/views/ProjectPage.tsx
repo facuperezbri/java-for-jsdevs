@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChevronRight, Clock, Hammer, CheckCircle2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useCurriculum } from '../data/curriculum';
 import { useProgress } from '../context/ProgressContext';
 import { isModuleUnlocked, getModuleAccentClasses } from '../lib/utils';
@@ -11,6 +12,7 @@ import { ProjectProgress } from '../components/project/ProjectProgress';
 import { ProjectStep } from '../components/project/ProjectStep';
 import { Badge } from '../components/ui/Badge';
 import { cn } from '../lib/utils';
+import { staggerContainer, staggerItem } from '../lib/motion';
 
 interface ProjectPageProps {
   moduleId: string;
@@ -71,18 +73,23 @@ export function ProjectPage({ moduleId }: ProjectPageProps) {
   const step = project.steps[currentStep];
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <motion.div
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+      className="max-w-3xl mx-auto px-4 py-8"
+    >
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 mb-6 text-sm">
-        <Link href="/" className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors">Home</Link>
-        <ChevronRight size={14} className="text-gray-400 dark:text-gray-500" />
-        <Link href={`/module/${module.id}`} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors">{module.title}</Link>
-        <ChevronRight size={14} className="text-gray-400 dark:text-gray-500" />
-        <span className="text-gray-700 dark:text-gray-300">Mini Project</span>
-      </div>
+      <motion.div variants={staggerItem} className="flex items-center gap-2 mb-6 text-sm">
+        <Link href="/" className="text-text-muted hover:text-text-secondary transition-colors">Home</Link>
+        <ChevronRight size={14} className="text-text-muted" />
+        <Link href={`/module/${module.id}`} className="text-text-muted hover:text-text-secondary transition-colors">{module.title}</Link>
+        <ChevronRight size={14} className="text-text-muted" />
+        <span className="text-text-secondary">Mini Project</span>
+      </motion.div>
 
       {/* Project header */}
-      <div className={cn('rounded-2xl border p-6 mb-8', accent.bgLight, 'border-' + module.accentColor + '/20')}>
+      <motion.div variants={staggerItem} className={cn('rounded-2xl border p-6 mb-8 bg-gradient-to-br', accent.bgLight, 'border-border-subtle')}>
         <div className="flex items-center gap-2 mb-3">
           <Badge variant={module.accentColor} size="sm">Module {module.order}</Badge>
           <Badge variant="gray" size="sm">
@@ -90,9 +97,9 @@ export function ProjectPage({ moduleId }: ProjectPageProps) {
             Mini Project
           </Badge>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{project.title}</h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{project.description}</p>
-        <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+        <h1 className="font-display text-display-md text-text-primary mb-1">{project.title}</h1>
+        <p className="text-text-secondary text-sm mb-4">{project.description}</p>
+        <div className="flex items-center gap-4 text-xs text-text-tertiary">
           <div className="flex items-center gap-1">
             <Clock size={12} />
             ~{project.estimatedMinutes} min
@@ -100,43 +107,48 @@ export function ProjectPage({ moduleId }: ProjectPageProps) {
           <div>{project.steps.length} steps</div>
           <div>{completedStepIndices.size}/{project.steps.length} complete</div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Progress bar */}
-      <div className="mb-8">
+      <motion.div variants={staggerItem} className="mb-8">
         <ProjectProgress
           totalSteps={project.steps.length}
           currentStep={currentStep}
           completedStepIndices={completedStepIndices}
           onStepClick={setCurrentStep}
         />
-      </div>
+      </motion.div>
 
       {/* Current step */}
       {step && (
-        <ProjectStep
-          key={step.id}
-          step={step}
-          stepNumber={currentStep + 1}
-          isComplete={isProjectStepComplete(module.id, step.id)}
-          onComplete={handleStepComplete}
-        />
+        <motion.div variants={staggerItem}>
+          <ProjectStep
+            key={step.id}
+            step={step}
+            stepNumber={currentStep + 1}
+            isComplete={isProjectStepComplete(module.id, step.id)}
+            onComplete={handleStepComplete}
+          />
+        </motion.div>
       )}
 
       {/* All complete */}
       {allComplete && (
-        <div className="mt-8 text-center p-6 rounded-xl bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800/50 animate-fade-in">
-          <CheckCircle2 size={32} className="text-green-500 dark:text-green-400 mx-auto mb-2" />
-          <h3 className="text-lg font-semibold text-green-800 dark:text-green-300 mb-1">Project Complete!</h3>
-          <p className="text-sm text-green-700 dark:text-green-400 mb-4">You've finished all {project.steps.length} steps.</p>
+        <motion.div
+          variants={staggerItem}
+          className="mt-8 text-center p-6 rounded-xl bg-module-green/5 border border-module-green/20 animate-fade-in"
+        >
+          <CheckCircle2 size={32} className="text-module-green mx-auto mb-2" />
+          <h3 className="font-display text-lg font-semibold text-module-green mb-1">Project Complete!</h3>
+          <p className="text-sm text-text-secondary mb-4">You've finished all {project.steps.length} steps.</p>
           <Link
             href={`/module/${module.id}`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-module-green text-white text-sm font-medium hover:bg-module-green/90 transition-colors"
           >
             Back to Module
           </Link>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

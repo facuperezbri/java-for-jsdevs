@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import { useLesson } from '../hooks/useLesson';
 import { useProgress } from '../context/ProgressContext';
 import { useCurriculum } from '../data/curriculum';
@@ -16,6 +17,7 @@ import { TranslationDrillExercise } from '../components/lesson/TranslationDrill'
 import { LessonNav } from '../components/lesson/LessonNav';
 import { LessonProgress } from '../components/lesson/LessonProgress';
 import { Button } from '../components/ui/Button';
+import { staggerContainer, staggerItem } from '../lib/motion';
 
 interface LessonPageProps {
   moduleId: string;
@@ -81,25 +83,32 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <motion.div
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+      className="max-w-3xl mx-auto px-4 py-8"
+    >
       {/* Lesson position dots */}
-      <div className="flex justify-between items-center mb-6">
+      <motion.div variants={staggerItem} className="flex justify-between items-center mb-6">
         <LessonProgress module={module} currentLessonId={lesson.id} />
-      </div>
+      </motion.div>
 
-      <LessonHeader
-        lesson={lesson}
-        module={module}
-        isComplete={isComplete}
-        lessonIndex={lessonIndex}
-        totalLessons={module.lessons.length}
-      />
+      <motion.div variants={staggerItem}>
+        <LessonHeader
+          lesson={lesson}
+          module={module}
+          isComplete={isComplete}
+          lessonIndex={lessonIndex}
+          totalLessons={module.lessons.length}
+        />
+      </motion.div>
 
       {/* Concepts (with inline challenges) */}
       <div className="space-y-10 mb-10">
         {lesson.concepts.map((concept, idx) => (
           <div key={concept.id}>
-            {idx > 0 && <div className="h-px bg-surface-700 mb-10" />}
+            {idx > 0 && <div className="h-px bg-border-subtle mb-10" />}
             <ConceptBlock
               concept={concept}
               isChallengeComplete={
@@ -117,11 +126,11 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
       {lesson.translationDrills && lesson.translationDrills.length > 0 && (
         <div className="space-y-4 mb-8">
           <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-surface-700" />
-            <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider px-2">
+            <div className="h-px flex-1 bg-border-subtle" />
+            <h2 className="font-display text-sm font-semibold text-text-tertiary uppercase tracking-wider px-2">
               {t('lessonPage.translateIt', 'Translate It')}
             </h2>
-            <div className="h-px flex-1 bg-surface-700" />
+            <div className="h-px flex-1 bg-border-subtle" />
           </div>
 
           {lesson.translationDrills.map((drill, idx) => (
@@ -140,11 +149,11 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
       {lesson.predictOutputs && lesson.predictOutputs.length > 0 && (
         <div className="space-y-4 mb-8">
           <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-surface-700" />
-            <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider px-2">
+            <div className="h-px flex-1 bg-border-subtle" />
+            <h2 className="font-display text-sm font-semibold text-text-tertiary uppercase tracking-wider px-2">
               {t('lessonPage.predictOutput', 'Predict the Output')}
             </h2>
-            <div className="h-px flex-1 bg-surface-700" />
+            <div className="h-px flex-1 bg-border-subtle" />
           </div>
 
           {lesson.predictOutputs.map((exercise, idx) => (
@@ -163,11 +172,11 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
       {lesson.exercises.length > 0 && (
         <div className="space-y-4 mb-8">
           <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-surface-700" />
-            <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider px-2">
+            <div className="h-px flex-1 bg-border-subtle" />
+            <h2 className="font-display text-sm font-semibold text-text-tertiary uppercase tracking-wider px-2">
               {t('lessonPage.thinkAboutIt', 'Think About It')}
             </h2>
-            <div className="h-px flex-1 bg-surface-700" />
+            <div className="h-px flex-1 bg-border-subtle" />
           </div>
 
           {lesson.exercises.map((exercise, idx) => (
@@ -193,10 +202,10 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
       )}
 
       {isComplete && !nextLesson && allLessonsComplete && (
-        <div className="flex justify-center mb-6 animate-[fadeIn_0.5s_ease-out]">
-          <div className="text-center p-4 rounded-xl bg-green-500/10 border border-green-500/20">
-            <CheckCircle2 size={32} className="text-green-500 mx-auto mb-2 animate-bounce" />
-            <p className="text-sm text-green-600 dark:text-green-400 font-medium">{t('lessonPage.moduleComplete', 'Module complete! Take the quiz to unlock the next module.')}</p>
+        <div className="flex justify-center mb-6 animate-fade-in-up">
+          <div className="text-center p-4 rounded-xl bg-module-green/10 border border-module-green/20">
+            <CheckCircle2 size={32} className="text-module-green mx-auto mb-2 animate-bounce" />
+            <p className="text-sm text-module-green font-medium">{t('lessonPage.moduleComplete', 'Module complete! Take the quiz to unlock the next module.')}</p>
           </div>
         </div>
       )}
@@ -212,6 +221,6 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
         onGoToQuiz={handleGoToQuiz}
       />
       <div ref={bottomRef} />
-    </div>
+    </motion.div>
   );
 }

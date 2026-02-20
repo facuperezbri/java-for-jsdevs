@@ -2,10 +2,12 @@
 
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import { useProgress } from '../context/ProgressContext';
 import { useCurriculum } from '../data/curriculum';
 import { ModuleCard } from '../components/home/ModuleCard';
 import { RoadmapHero } from '../components/home/RoadmapHero';
+import { staggerContainer, staggerItem } from '../lib/motion';
 
 export function HomePage() {
   const { setLastVisited } = useProgress();
@@ -20,20 +22,31 @@ export function HomePage() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       <RoadmapHero />
 
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('home.courseModules', 'Course Modules')}</h2>
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h2 variants={staggerItem} className="font-display text-display-sm text-text-primary mb-4">
+          {t('home.courseModules', 'Course Modules')}
+        </motion.h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {CURRICULUM.map((module) => (
             <ModuleCard key={module.id} module={module} />
           ))}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="mt-12 text-center">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+      <motion.div
+        variants={staggerItem}
+        initial="hidden"
+        animate="visible"
+        className="mt-12 text-center"
+      >
+        <p className="text-sm text-text-tertiary">
           {t('home.stats', '4 modules · 20 lessons · 4 quizzes · Built for React/JS developers')}
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }

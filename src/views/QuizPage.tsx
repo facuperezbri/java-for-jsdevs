@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { AnimatePresence } from 'framer-motion';
 import { useCurriculum } from '../data/curriculum';
 import { useProgress } from '../context/ProgressContext';
 import { isModuleUnlocked } from '../lib/utils';
@@ -89,12 +90,12 @@ export function QuizPage({ moduleId }: QuizPageProps) {
       <div className="flex items-center justify-between mb-8">
         <Link
           href={`/module/${moduleId}`}
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-text-tertiary hover:text-text-primary transition-colors"
         >
           <ChevronLeft size={16} />
           {module.title}
         </Link>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-text-tertiary">
           {phase === 'answering'
             ? `Question ${currentIndex + 1} of ${quiz.questions.length}`
             : 'Results'}
@@ -110,12 +111,14 @@ export function QuizPage({ moduleId }: QuizPageProps) {
             questionIds={quiz.questions.map((q) => q.id)}
             module={module}
           />
-          <QuizCard
-            key={quiz.questions[currentIndex].id}
-            question={quiz.questions[currentIndex]}
-            module={module}
-            onAnswer={handleAnswer}
-          />
+          <AnimatePresence mode="wait">
+            <QuizCard
+              key={quiz.questions[currentIndex].id}
+              question={quiz.questions[currentIndex]}
+              module={module}
+              onAnswer={handleAnswer}
+            />
+          </AnimatePresence>
         </>
       )}
 
