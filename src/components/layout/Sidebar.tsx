@@ -192,9 +192,13 @@ export function Sidebar({ onClose }: SidebarProps) {
 
       {/* Footer */}
       <div className="px-5 py-3 border-t border-border-subtle flex-shrink-0 flex items-center justify-between">
-        <Link href="/" onClick={onClose} className="text-xs text-text-tertiary hover:text-text-primary transition-colors">
-          {t('sidebar.backToRoadmap', '← Back to Roadmap')}
-        </Link>
+        {pathname !== '/' ? (
+          <Link href="/" onClick={onClose} className="text-xs text-text-tertiary hover:text-text-primary transition-colors">
+            {t('sidebar.backToRoadmap', '← Back to Roadmap')}
+          </Link>
+        ) : (
+          <span />
+        )}
         <UserButton afterSignOutUrl="/login" />
       </div>
     </div>
