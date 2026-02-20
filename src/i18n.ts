@@ -14,16 +14,19 @@ const resources = {
   },
 };
 
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    resources,
-    fallbackLng: 'en',
-    defaultNS: 'ui',
-    interpolation: {
-      escapeValue: false, // react already safes from xss
-    },
-  });
+// Only initialize if not already initialized
+if (!i18n.isInitialized) {
+  i18n
+    .use(LanguageDetector)
+    .use(initReactI18next)
+    .init({
+      resources,
+      fallbackLng: 'en',
+      defaultNS: 'ui',
+      interpolation: {
+        escapeValue: false, // react already safes from xss
+      },
+    });
+}
 
 export default i18n;
