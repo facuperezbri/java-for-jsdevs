@@ -87,7 +87,7 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
-      className="max-w-3xl mx-auto px-4 py-8"
+      className="max-w-5xl mx-auto px-4 py-8"
     >
       {/* Lesson position dots */}
       <motion.div variants={staggerItem} className="flex justify-between items-center mb-6">
