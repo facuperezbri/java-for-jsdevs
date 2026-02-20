@@ -1,5 +1,8 @@
+'use client';
+
 import { ChevronLeft, ChevronRight, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import type { Lesson, Module } from '../../types';
 import { Button } from '../ui/Button';
 
@@ -17,7 +20,7 @@ export function LessonNav({ prevLesson, nextLesson, allLessonsComplete, onPrev, 
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center justify-between mt-8 pt-6 border-t border-surface-700">
+    <div className="flex items-center justify-between mt-8 pt-6 border-t border-border-subtle">
       <div>
         {prevLesson ? (
           <Button variant="secondary" size="sm" onClick={onPrev}>
@@ -29,10 +32,12 @@ export function LessonNav({ prevLesson, nextLesson, allLessonsComplete, onPrev, 
 
       <div className="flex items-center gap-3">
         {nextLesson ? (
-          <Button variant="primary" onClick={onNext}>
-            {t('lessonNav.nextLesson', 'Next lesson')}
-            <ChevronRight size={16} />
-          </Button>
+          <motion.div whileHover={{ x: 4 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+            <Button variant="primary" onClick={onNext}>
+              {t('lessonNav.nextLesson', 'Next lesson')}
+              <ChevronRight size={16} />
+            </Button>
+          </motion.div>
         ) : allLessonsComplete ? (
           <Button variant="primary" onClick={onGoToQuiz}>
             <Trophy size={16} />

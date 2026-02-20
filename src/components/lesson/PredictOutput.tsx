@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { CheckCircle2, XCircle, Terminal, Lightbulb } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -53,17 +55,17 @@ export function PredictOutputExercise({ exercise, index, isComplete, onComplete 
       className={cn(
         'rounded-xl border p-5 space-y-4 transition-all animate-fade-in',
         done
-          ? 'bg-green-50/50 border-green-200 shadow-sm'
-          : 'bg-white border-surface-700 shadow-sm'
+          ? 'bg-module-green/5 border-module-green/20 shadow-editorial'
+          : 'bg-surface-1 border-border-subtle shadow-editorial'
       )}
     >
       <div className="flex gap-3">
-        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800/50 flex items-center justify-center">
-          <Terminal size={14} className="text-purple-600 dark:text-purple-400" />
+        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-module-purple/10 border border-module-purple/20 flex items-center justify-center">
+          <Terminal size={14} className="text-module-purple" />
         </div>
         <div>
-          <div className="text-xs text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wider font-medium">{t('predict.title', 'Predict the Output')} {index + 1}</div>
-          <p className="text-sm text-gray-800 dark:text-gray-200">{t('predict.subtitle', 'What will this code print?')}</p>
+          <div className="text-xs text-text-tertiary mb-1 uppercase tracking-wider font-medium">{t('predict.title', 'Predict the Output')} {index + 1}</div>
+          <p className="text-sm text-text-primary">{t('predict.subtitle', 'What will this code print?')}</p>
         </div>
       </div>
 
@@ -82,13 +84,13 @@ export function PredictOutputExercise({ exercise, index, isComplete, onComplete 
             }}
             placeholder={t('predict.placeholder', 'Type the expected output...')}
             rows={2}
-            className="w-full px-3 py-2 rounded-lg border border-surface-700 bg-white dark:bg-surface-800 text-gray-900 dark:text-gray-100 text-sm font-mono placeholder-gray-500 outline-none focus:border-blue-500 resize-none transition-colors"
+            className="w-full px-3 py-2 rounded-lg border border-border bg-surface-1 text-text-primary text-sm font-mono placeholder-text-muted outline-none focus:border-module-blue resize-none transition-colors"
           />
 
           {exercise.hint && !showHint && (
             <button
               onClick={() => setShowHint(true)}
-              className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+              className="flex items-center gap-1.5 text-xs text-amber-500 hover:text-amber-400 transition-colors"
             >
               <Lightbulb size={12} />
               {t('common.showHint', 'Show hint')}
@@ -96,9 +98,9 @@ export function PredictOutputExercise({ exercise, index, isComplete, onComplete 
           )}
 
           {showHint && exercise.hint && (
-            <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800/50 animate-fade-in">
-              <p className="text-xs text-amber-800 dark:text-amber-300">
-                <span className="font-semibold">{t('common.hint', 'Hint')}: </span>{exercise.hint}
+            <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 animate-fade-in">
+              <p className="text-xs text-text-secondary">
+                <span className="font-semibold text-amber-500">{t('common.hint', 'Hint')}: </span>{exercise.hint}
               </p>
             </div>
           )}
@@ -115,11 +117,11 @@ export function PredictOutputExercise({ exercise, index, isComplete, onComplete 
           </div>
 
           {submitted && !correct && (
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 animate-fade-in">
-              <XCircle size={14} className="text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
-              <div className="text-xs text-red-700 dark:text-red-300">
-                <p className="font-medium">{t('predict.notQuite', 'Not quite!')}</p>
-                <button onClick={handleRetry} className="underline mt-1 hover:text-red-800 dark:hover:text-red-200">
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-module-red/5 border border-module-red/20 animate-fade-in">
+              <XCircle size={14} className="text-module-red flex-shrink-0 mt-0.5" />
+              <div className="text-xs text-text-secondary">
+                <p className="font-medium text-module-red">{t('predict.notQuite', 'Not quite!')}</p>
+                <button onClick={handleRetry} className="underline mt-1 hover:text-text-primary">
                   {t('common.tryAgain', 'Try again')}
                 </button>
               </div>
@@ -131,17 +133,17 @@ export function PredictOutputExercise({ exercise, index, isComplete, onComplete 
       {done && (
         <div className="space-y-2 animate-fade-in">
           {gaveUp && (
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800/50">
-              <Terminal size={14} className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-              <div className="text-xs text-amber-800 dark:text-amber-300">
-                <span className="font-semibold">{t('predict.expectedOutput', 'Expected output:')} </span>
-                <code className="bg-amber-100 dark:bg-amber-900/50 px-1 py-0.5 rounded">{exercise.expectedOutput}</code>
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
+              <Terminal size={14} className="text-amber-500 flex-shrink-0 mt-0.5" />
+              <div className="text-xs text-text-secondary">
+                <span className="font-semibold text-amber-500">{t('predict.expectedOutput', 'Expected output:')} </span>
+                <code className="bg-amber-500/10 px-1 py-0.5 rounded">{exercise.expectedOutput}</code>
               </div>
             </div>
           )}
-          <div className="flex items-start gap-2 p-3 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800/50">
-            <CheckCircle2 size={14} className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-green-800 dark:text-green-300 leading-relaxed">{exercise.explanation}</p>
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-module-green/5 border border-module-green/20">
+            <CheckCircle2 size={14} className="text-module-green flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-text-secondary leading-relaxed">{exercise.explanation}</p>
           </div>
         </div>
       )}

@@ -1,6 +1,9 @@
+'use client';
+
 import { useState } from 'react';
 import { CheckCircle2, XCircle, Code2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { CodeChallenge as CodeChallengeType } from '../../types';
 import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
@@ -76,10 +79,10 @@ export function CodeChallenge({ challenge, isComplete, onComplete }: CodeChallen
             placeholder={blank.hint ?? '...'}
             style={{ width: `${maxLen + 2}ch` }}
             className={cn(
-              'inline-block mx-2 my-1 px-2 py-0.5 rounded text-sm font-mono bg-gray-700 dark:bg-gray-800 border text-white placeholder-gray-500 dark:placeholder-gray-400 outline-none transition-all',
-              isCorrect && 'border-green-500 dark:border-green-600 bg-green-900/30 dark:bg-green-900/40',
-              isWrong && 'border-red-500 dark:border-red-600 bg-red-900/30 dark:bg-red-900/40',
-              !submitted && 'border-gray-600 dark:border-gray-500 focus:border-blue-500 dark:focus:border-blue-400',
+              'inline-block mx-2 my-1 px-2 py-0.5 rounded text-sm font-mono border text-white placeholder-text-muted outline-none transition-all',
+              isCorrect && 'border-module-green bg-module-green/10',
+              isWrong && 'border-module-red bg-module-red/10',
+              !submitted && 'border-border bg-surface-3 focus:border-module-blue',
               isWrong && shaking && 'animate-[shake_0.3s_ease-in-out]'
             )}
           />
@@ -94,26 +97,26 @@ export function CodeChallenge({ challenge, isComplete, onComplete }: CodeChallen
       className={cn(
         'mt-4 rounded-xl border p-4 space-y-3 transition-all',
         allCorrect || isComplete
-          ? 'bg-green-50/50 dark:bg-green-900/30 border-green-200 dark:border-green-800/50'
-          : 'bg-white dark:bg-surface-900 border-surface-700'
+          ? 'bg-module-green/5 border-module-green/20'
+          : 'bg-surface-1 border-border-subtle'
       )}
     >
       <div className="flex items-center gap-2">
-        <Code2 size={14} className="text-blue-600 dark:text-blue-400" />
-        <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+        <Code2 size={14} className="text-module-blue" />
+        <span className="text-xs font-semibold text-text-tertiary uppercase tracking-wider">
           {challenge.type === 'fill-blank' ? t('challenge.fillBlanks', 'Fill in the Blanks') : t('challenge.fixBug', 'Fix the Bug')}
         </span>
-        {(allCorrect || isComplete) && <CheckCircle2 size={14} className="text-green-500 dark:text-green-400" />}
+        {(allCorrect || isComplete) && <CheckCircle2 size={14} className="text-module-green" />}
       </div>
 
-      <p className="text-sm text-gray-800 dark:text-gray-200">{challenge.prompt}</p>
+      <p className="text-sm text-text-primary">{challenge.prompt}</p>
 
-      <div className="rounded-lg overflow-hidden border border-surface-700">
+      <div className="rounded-lg overflow-hidden border border-border-subtle">
         <pre
           className="p-4 text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap"
           style={{
-            background: '#111118',
-            fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+            background: 'var(--color-code-bg)',
+            fontFamily: "var(--font-jetbrains), 'Fira Code', monospace",
             color: '#d4d4d4',
           }}
         >
@@ -134,18 +137,27 @@ export function CodeChallenge({ challenge, isComplete, onComplete }: CodeChallen
       )}
 
       {submitted && !allCorrect && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50">
-          <XCircle size={14} className="text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-red-700 dark:text-red-300">{t('challenge.notQuite', 'Not quite right. Check the highlighted blanks and try again.')}</p>
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-module-red/5 border border-module-red/20">
+          <XCircle size={14} className="text-module-red flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-text-secondary">{t('challenge.notQuite', 'Not quite right. Check the highlighted blanks and try again.')}</p>
         </div>
       )}
 
-      {(allCorrect || isComplete) && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800/50 animate-fade-in">
-          <CheckCircle2 size={14} className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-green-800 dark:text-green-300 leading-relaxed">{challenge.explanation}</p>
-        </div>
-      )}
+      <AnimatePresence>
+        {(allCorrect || isComplete) && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-module-green/5 border border-module-green/20">
+              <CheckCircle2 size={14} className="text-module-green flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-text-secondary leading-relaxed">{challenge.explanation}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,8 +1,12 @@
+'use client';
+
 import { Info, AlertTriangle, Lightbulb, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
 import type { ConceptSection } from '../../types';
 import { CodeComparison } from './CodeComparison';
 import { CodeChallenge } from './CodeChallenge';
 import { cn } from '../../lib/utils';
+import { staggerItem } from '../../lib/motion';
 
 interface ConceptBlockProps {
   concept: ConceptSection;
@@ -11,10 +15,10 @@ interface ConceptBlockProps {
 }
 
 const calloutConfig = {
-  info: { icon: Info, bg: 'bg-blue-50 dark:bg-blue-900/30', border: 'border-blue-200 dark:border-blue-800/50', text: 'text-blue-800 dark:text-blue-300', iconColor: 'text-blue-600 dark:text-blue-400' },
-  warning: { icon: AlertTriangle, bg: 'bg-amber-50 dark:bg-amber-900/30', border: 'border-amber-200 dark:border-amber-800/50', text: 'text-amber-800 dark:text-amber-300', iconColor: 'text-amber-600 dark:text-amber-400' },
-  tip: { icon: Lightbulb, bg: 'bg-emerald-50 dark:bg-emerald-900/30', border: 'border-emerald-200 dark:border-emerald-800/50', text: 'text-emerald-800 dark:text-emerald-300', iconColor: 'text-emerald-600 dark:text-emerald-400' },
-  gotcha: { icon: Zap, bg: 'bg-red-50 dark:bg-red-900/30', border: 'border-red-200 dark:border-red-800/50', text: 'text-red-800 dark:text-red-300', iconColor: 'text-red-600 dark:text-red-400' },
+  info: { icon: Info, border: 'border-l-module-blue', bg: 'bg-module-blue/5', text: 'text-text-secondary', iconColor: 'text-module-blue' },
+  warning: { icon: AlertTriangle, border: 'border-l-amber-500', bg: 'bg-amber-500/5', text: 'text-text-secondary', iconColor: 'text-amber-500' },
+  tip: { icon: Lightbulb, border: 'border-l-module-green', bg: 'bg-module-green/5', text: 'text-text-secondary', iconColor: 'text-module-green' },
+  gotcha: { icon: Zap, border: 'border-l-java', bg: 'bg-java/5', text: 'text-text-secondary', iconColor: 'text-java' },
 };
 
 export function ConceptBlock({ concept, isChallengeComplete, onChallengeComplete }: ConceptBlockProps) {
@@ -22,16 +26,22 @@ export function ConceptBlock({ concept, isChallengeComplete, onChallengeComplete
   const CalloutIcon = callout?.icon;
 
   return (
-    <div className="space-y-4 animate-fade-in">
+    <motion.div
+      variants={staggerItem}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-50px' }}
+      className="space-y-4"
+    >
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{concept.title}</h3>
-        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{concept.explanation}</p>
+        <h3 className="font-display text-display-sm text-text-primary mb-2">{concept.title}</h3>
+        <p className="text-text-secondary leading-reading">{concept.explanation}</p>
       </div>
 
       {concept.analogy && (
-        <div className="flex gap-3 p-3 bg-surface-800 rounded-lg border border-surface-700 shadow-sm transition-transform duration-300 hover:scale-[1.01]">
+        <div className="flex gap-3 p-3 border-l-2 border-java/30 bg-surface-2/50 rounded-r-lg">
           <span className="text-xl flex-shrink-0">💡</span>
-          <p className="text-sm text-gray-700 dark:text-gray-300 italic">{concept.analogy}</p>
+          <p className="text-sm text-text-secondary italic">{concept.analogy}</p>
         </div>
       )}
 
@@ -40,7 +50,7 @@ export function ConceptBlock({ concept, isChallengeComplete, onChallengeComplete
       )}
 
       {concept.callout && callout && CalloutIcon && (
-        <div className={cn('flex gap-3 p-3 rounded-lg border shadow-sm transition-transform duration-300 hover:scale-[1.01]', callout.bg, callout.border)}>
+        <div className={cn('flex gap-3 p-3 rounded-r-lg border-l-[3px]', callout.border, callout.bg)}>
           <CalloutIcon size={16} className={cn('flex-shrink-0 mt-0.5', callout.iconColor)} />
           <p className={cn('text-sm', callout.text)}>{concept.callout.text}</p>
         </div>
@@ -53,6 +63,6 @@ export function ConceptBlock({ concept, isChallengeComplete, onChallengeComplete
           onComplete={onChallengeComplete}
         />
       )}
-    </div>
+    </motion.div>
   );
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -37,8 +39,8 @@ function DraggableToken({ id, label, disabled }: { id: string; label: string; di
         'px-3 py-1.5 rounded-lg text-sm font-mono border transition-all select-none',
         isDragging && 'opacity-30',
         disabled
-          ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-700 cursor-not-allowed'
-          : 'bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800/50 hover:bg-blue-100 dark:hover:bg-blue-900/50 cursor-grab active:cursor-grabbing shadow-sm'
+          ? 'bg-surface-2 text-text-muted border-border-subtle cursor-not-allowed'
+          : 'bg-module-blue/10 text-module-blue border-module-blue/20 hover:bg-module-blue/15 cursor-grab active:cursor-grabbing shadow-sm'
       )}
     >
       {label}
@@ -71,13 +73,13 @@ function DroppableSlot({
         'inline-flex items-center justify-center min-w-[5rem] px-2 py-0.5 mx-1 rounded border text-sm font-mono transition-all',
         value
           ? submitted && isCorrect
-            ? 'bg-green-100 dark:bg-green-900/30 border-green-400 dark:border-green-600 text-green-800 dark:text-green-300'
+            ? 'bg-module-green/10 border-module-green/30 text-module-green'
             : submitted && isWrong
-              ? 'bg-red-100 dark:bg-red-900/30 border-red-400 dark:border-red-600 text-red-800 dark:text-red-300'
-              : 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 cursor-pointer'
+              ? 'bg-module-red/10 border-module-red/30 text-module-red'
+              : 'bg-module-blue/10 border-module-blue/20 text-module-blue hover:bg-module-blue/15 cursor-pointer'
           : isOver
-            ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-400 dark:border-blue-600 border-dashed'
-            : 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 border-dashed text-gray-400 dark:text-gray-500'
+            ? 'bg-module-blue/10 border-module-blue/30 border-dashed'
+            : 'bg-surface-2 border-border border-dashed text-text-muted'
       )}
     >
       {value ?? '___'}
@@ -140,12 +142,6 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
 
     setUsedTokens((prev) => {
       const next = new Set(prev);
-      // Remove old token reference if it was placed before
-      for (const [, val] of Object.entries(slotValues)) {
-        if (val === tokenId) {
-          // Will be handled by the setSlotValues above
-        }
-      }
       next.add(tokenId);
       return next;
     });
@@ -259,43 +255,43 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
       className={cn(
         'rounded-xl border p-5 space-y-4 transition-all animate-fade-in',
         done
-          ? 'bg-green-50/50 dark:bg-green-900/30 border-green-200 dark:border-green-800/50 shadow-sm'
-          : 'bg-white dark:bg-surface-900 border-surface-700 shadow-sm'
+          ? 'bg-module-green/5 border-module-green/20 shadow-editorial'
+          : 'bg-surface-1 border-border-subtle shadow-editorial'
       )}
     >
       <div className="flex gap-3">
-        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800/50 flex items-center justify-center">
-          <ArrowRightLeft size={14} className="text-indigo-600 dark:text-indigo-400" />
+        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-module-purple/10 border border-module-purple/20 flex items-center justify-center">
+          <ArrowRightLeft size={14} className="text-module-purple" />
         </div>
         <div>
-          <div className="text-xs text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wider font-medium">{t('drill.title', 'Translation Drill')} {index + 1}</div>
-          <p className="text-sm text-gray-800 dark:text-gray-200">{t('drill.subtitle', 'Translate the JavaScript code to Java by dragging tokens into the correct slots.')}</p>
+          <div className="text-xs text-text-tertiary mb-1 uppercase tracking-wider font-medium">{t('drill.title', 'Translation Drill')} {index + 1}</div>
+          <p className="text-sm text-text-primary">{t('drill.subtitle', 'Translate the JavaScript code to Java by dragging tokens into the correct slots.')}</p>
         </div>
       </div>
 
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* JS side */}
-          <div>
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-50/50 dark:bg-[#1a1a00] border border-[#f7df1e]/20 rounded-t-lg">
-              <span className="text-sm">🟨</span>
-              <span className="text-xs font-semibold text-yellow-700 dark:text-[#f7df1e] uppercase tracking-wider">{t('codeLabels.javascript', 'JavaScript')}</span>
+          <div className="rounded-xl border border-border-subtle overflow-hidden">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-js-muted border-b border-js/20">
+              <span className="w-2 h-2 rounded-full bg-js" />
+              <span className="text-xs font-semibold text-js-dark uppercase tracking-wider">{t('codeLabels.javascript', 'JavaScript')}</span>
             </div>
             <CodeBlock code={drill.jsCode} language="javascript" />
           </div>
 
           {/* Java side with drop zones */}
-          <div>
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50/50 dark:bg-[#1a0000] border border-java/20 rounded-t-lg">
-              <span className="text-sm">☕</span>
-              <span className="text-xs font-semibold text-red-700 dark:text-java uppercase tracking-wider">{t('codeLabels.java', 'Java')}</span>
+          <div className="rounded-xl border border-border-subtle overflow-hidden">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-java-glow border-b border-java/20">
+              <span className="w-2 h-2 rounded-full bg-java" />
+              <span className="text-xs font-semibold text-java uppercase tracking-wider">{t('codeLabels.java', 'Java')}</span>
             </div>
-            <div className="rounded-b-lg overflow-x-auto border border-surface-700 border-t-0">
+            <div className="overflow-x-auto">
               <pre
                 className="p-4 text-sm leading-relaxed whitespace-pre-wrap"
                 style={{
-                  background: '#111118',
-                  fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                  background: 'var(--color-code-bg)',
+                  fontFamily: "var(--font-jetbrains), 'Fira Code', monospace",
                   color: '#d4d4d4',
                 }}
               >
@@ -308,7 +304,7 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
         {/* Token bank */}
         {!done && (
           <div className="space-y-2">
-            <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">{t('drill.tokenBank', 'Token Bank — drag or click to place:')}</p>
+            <p className="text-xs text-text-tertiary font-medium">{t('drill.tokenBank', 'Token Bank — drag or click to place:')}</p>
             <div className="flex flex-wrap gap-2">
               {drill.tokenBank.map((token) => (
                 <div
@@ -328,7 +324,7 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
 
         <DragOverlay>
           {activeId ? (
-            <div className="px-3 py-1.5 rounded-lg text-sm font-mono bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-700 shadow-lg">
+            <div className="px-3 py-1.5 rounded-lg text-sm font-mono bg-module-blue/15 text-module-blue border border-module-blue/30 shadow-editorial-lg">
               {activeId}
             </div>
           ) : null}
@@ -344,16 +340,16 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
       )}
 
       {submitted && !allCorrect && !done && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 animate-fade-in">
-          <XCircle size={14} className="text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-red-700 dark:text-red-300">{t('drill.incorrect', 'Some slots are incorrect. Click wrong tokens to return them and try again.')}</p>
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-module-red/5 border border-module-red/20 animate-fade-in">
+          <XCircle size={14} className="text-module-red flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-text-secondary">{t('drill.incorrect', 'Some slots are incorrect. Click wrong tokens to return them and try again.')}</p>
         </div>
       )}
 
       {done && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800/50 animate-fade-in">
-          <CheckCircle2 size={14} className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-green-800 dark:text-green-300 leading-relaxed">{drill.explanation}</p>
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-module-green/5 border border-module-green/20 animate-fade-in">
+          <CheckCircle2 size={14} className="text-module-green flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-text-secondary leading-relaxed">{drill.explanation}</p>
         </div>
       )}
     </div>
