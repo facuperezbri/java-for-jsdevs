@@ -1,73 +1,69 @@
-# React + TypeScript + Vite
+# Java for JS Devs
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interactive course teaching Java through the lens of JavaScript — side-by-side code comparisons, fill-in-the-blank challenges, quizzes, and hands-on projects.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **4 modules**: Basic Syntax & Types, OOP, Collections, Spring
+- **20 lessons** with JS vs Java code comparisons
+- **4 quizzes** with progress tracking
+- **Hands-on mini-projects** per module
+- **Bilingual support** (English, Spanish) via i18next
+- **Auth** via Clerk (login, SSO)
+- **Progress persistence** with Drizzle ORM + Neon Postgres
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework**: Next.js 15, React 19
+- **Auth**: Clerk
+- **Database**: Neon Postgres + Drizzle ORM
+- **Styling**: Tailwind CSS
+- **i18n**: i18next, react-i18next
+- **UI**: Framer Motion, Lucide icons, react-syntax-highlighter
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**Prerequisites**: Node.js, npm
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+**Install**:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**Environment**: Copy `.env.example` to `.env.local` and fill in:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Clerk keys (from [clerk.com](https://clerk.com))
+- `DATABASE_URL` (Neon Postgres connection string)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**Run**:
+
+```bash
+npm run dev
 ```
+
+**Database migrations** (if using progress/DB features):
+
+```bash
+npm run db:generate
+npm run db:migrate
+```
+
+## Scripts
+
+| Script                | Purpose                     |
+| -------------------- | --------------------------- |
+| `npm run dev`        | Start dev server            |
+| `npm run build`      | Production build            |
+| `npm run start`      | Run production server       |
+| `npm run lint`       | Run ESLint                  |
+| `npm run db:generate`| Generate Drizzle migrations |
+| `npm run db:migrate` | Run migrations              |
+
+## Project Structure
+
+- `src/app/` — Next.js App Router (auth, main layout, module/lesson/quiz/project routes)
+- `src/components/` — UI (lesson blocks, quiz cards, project editor, auth)
+- `src/data/` — Curriculum (modules, quizzes) in EN/ES
+- `src/views/` — Page-level components
+- `db/` — Drizzle schema
