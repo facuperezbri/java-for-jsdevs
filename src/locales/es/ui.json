@@ -1,0 +1,135 @@
+{
+  "roadmap": {
+    "learningPath": "Ruta de Aprendizaje",
+    "title": "Java para Desarrolladores JavaScript",
+    "description": "Domina Java comparándolo con lo que ya sabes. Cada concepto se muestra lado a lado con su equivalente en JavaScript.",
+    "startJourney": "Comienza tu viaje",
+    "lessonsComplete": "{{completed}} de {{total}} lecciones completadas",
+    "startLearning": "Comenzar a aprender",
+    "continue": "Continuar"
+  },
+  "home": {
+    "courseModules": "Módulos del Curso",
+    "stats": "4 módulos · 20 lecciones · 4 cuestionarios · Creado para desarrolladores React/JS"
+  },
+  "common": {
+    "check": "Verificar",
+    "showHint": "Mostrar pista",
+    "hint": "Pista",
+    "tryAgain": "Intentar de nuevo",
+    "giveUp": "Rendirse",
+    "revealAnswer": "Revelar respuesta",
+    "minRead": "min de lectura",
+    "min": "min",
+    "home": "Inicio"
+  },
+  "drill": {
+    "title": "Ejercicio de Traducción",
+    "subtitle": "Traduce el código JavaScript a Java arrastrando tokens a los espacios correctos.",
+    "tokenBank": "Banco de Tokens — arrastra o haz clic para colocar:",
+    "incorrect": "Algunos espacios son incorrectos. Haz clic en los tokens incorrectos para devolverlos e intenta de nuevo."
+  },
+  "challenge": {
+    "fillBlanks": "Completar los Espacios",
+    "fixBug": "Corregir el Error",
+    "notQuite": "No es correcto. Revisa los espacios resaltados e intenta de nuevo."
+  },
+  "quiz": {
+    "correct": "¡Correcto!",
+    "notQuite": "No es correcto",
+    "checkAnswer": "Verificar respuesta",
+    "nextQuestion": "Siguiente pregunta"
+  },
+  "quizResults": {
+    "of": "de",
+    "correct": "correctas",
+    "unlocked": "¡desbloqueado!",
+    "courseComplete": "¡Curso completado!",
+    "needScore": "Necesitas ≥60% para aprobar — obtuviste {{score}}%. ¡Intenta de nuevo!",
+    "review": "Revisión",
+    "yourAnswer": "Tu respuesta:",
+    "correctAnswer": "Correcta:",
+    "retry": "Reintentar cuestionario",
+    "start": "Comenzar",
+    "backHome": "Volver al inicio",
+    "reviewLessons": "Revisar lecciones",
+    "perfect": "Perfecto"
+  },
+  "lessonHeader": {
+    "lessonCount": "Lección {{current}} de {{total}}",
+    "complete": "Completada"
+  },
+  "lessonNav": {
+    "previous": "Anterior",
+    "nextLesson": "Siguiente lección",
+    "takeQuiz": "Hacer cuestionario"
+  },
+  "lessonPage": {
+    "translateIt": "Tradúcelo",
+    "predictOutput": "Predice la Salida",
+    "thinkAboutIt": "Piénsalo",
+    "markComplete": "Marcar lección como completada",
+    "moduleComplete": "¡Módulo completado! Haz el cuestionario para desbloquear el siguiente módulo."
+  },
+  "moduleCard": {
+    "module": "Módulo",
+    "lessons": "lecciones",
+    "quiz": "Cuestionario",
+    "passToUnlock": "Aprueba el cuestionario del Módulo {{prevOrder}} (≥60%) para desbloquear"
+  },
+  "modulePage": {
+    "module": "Módulo",
+    "of": "de",
+    "lessonsComplete": "lecciones completadas",
+    "lessons": "Lecciones",
+    "concepts": "conceptos",
+    "exercises": "ejercicios",
+    "miniProject": "Mini Proyecto",
+    "steps": "pasos",
+    "optional": "Opcional",
+    "moduleQuiz": "Cuestionario del Módulo",
+    "bestScore": "Mejor puntuación",
+    "passed": "Aprobado",
+    "tryAgain": "Intenta de nuevo para mejorar",
+    "quizDesc": "8 preguntas · Aprueba con ≥60% para desbloquear el siguiente módulo",
+    "completeAllLessons": "Completa todas las lecciones para desbloquear"
+  },
+  "project": {
+    "revealHint": "Revelar pista",
+    "checkSolution": "Verificar Solución",
+    "showSolution": "Mostrar Solución",
+    "incorrect": "Tu solución aún no coincide con el patrón esperado."
+  },
+  "predict": {
+    "title": "Predice la Salida",
+    "subtitle": "¿Qué imprimirá este código?",
+    "placeholder": "Escribe la salida esperada...",
+    "notQuite": "¡No es correcto!",
+    "expectedOutput": "Salida esperada:"
+  },
+  "thinking": {
+    "exercise": "Ejercicio"
+  },
+  "codeLabels": {
+    "javascript": "JavaScript",
+    "java": "Java"
+  },
+  "sidebar": {
+    "appName": "Java para Devs JS",
+    "interactiveCourse": "Curso Interactivo",
+    "overallProgress": "Progreso General",
+    "lessons": "lecciones",
+    "miniProject": "Mini Proyecto",
+    "moduleQuiz": "Cuestionario del Módulo",
+    "backToRoadmap": "← Volver a la Ruta"
+  },
+  "topBar": {
+    "appName": "Java para Devs JS"
+  },
+  "aria": {
+    "openMenu": "Abrir menú",
+    "toggleLanguage": "Cambiar idioma",
+    "toggleTheme": "Cambiar tema",
+    "copyCode": "Copiar código"
+  }
+}

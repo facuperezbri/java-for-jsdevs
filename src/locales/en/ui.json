@@ -1,0 +1,135 @@
+{
+  "roadmap": {
+    "learningPath": "Learning Path",
+    "title": "Java for JavaScript Developers",
+    "description": "Master Java by comparing it to what you already know. Every concept is shown side-by-side with its JavaScript equivalent.",
+    "startJourney": "Start your journey",
+    "lessonsComplete": "{{completed}} of {{total}} lessons complete",
+    "startLearning": "Start learning",
+    "continue": "Continue"
+  },
+  "home": {
+    "courseModules": "Course Modules",
+    "stats": "4 modules · 20 lessons · 4 quizzes · Built for React/JS developers"
+  },
+  "common": {
+    "check": "Check",
+    "showHint": "Show hint",
+    "hint": "Hint",
+    "tryAgain": "Try again",
+    "giveUp": "Give Up",
+    "revealAnswer": "Reveal answer",
+    "minRead": "min read",
+    "min": "min",
+    "home": "Home"
+  },
+  "drill": {
+    "title": "Translation Drill",
+    "subtitle": "Translate the JavaScript code to Java by dragging tokens into the correct slots.",
+    "tokenBank": "Token Bank — drag or click to place:",
+    "incorrect": "Some slots are incorrect. Click wrong tokens to return them and try again."
+  },
+  "challenge": {
+    "fillBlanks": "Fill in the Blanks",
+    "fixBug": "Fix the Bug",
+    "notQuite": "Not quite right. Check the highlighted blanks and try again."
+  },
+  "quiz": {
+    "correct": "Correct!",
+    "notQuite": "Not quite",
+    "checkAnswer": "Check answer",
+    "nextQuestion": "Next question"
+  },
+  "quizResults": {
+    "of": "of",
+    "correct": "correct",
+    "unlocked": "unlocked!",
+    "courseComplete": "Course complete!",
+    "needScore": "Need ≥60% to pass — you got {{score}}%. Try again!",
+    "review": "Review",
+    "yourAnswer": "Your answer:",
+    "correctAnswer": "Correct:",
+    "retry": "Retry quiz",
+    "start": "Start",
+    "backHome": "Back to home",
+    "reviewLessons": "Review lessons",
+    "perfect": "Perfect"
+  },
+  "lessonHeader": {
+    "lessonCount": "Lesson {{current}} of {{total}}",
+    "complete": "Complete"
+  },
+  "lessonNav": {
+    "previous": "Previous",
+    "nextLesson": "Next lesson",
+    "takeQuiz": "Take quiz"
+  },
+  "lessonPage": {
+    "translateIt": "Translate It",
+    "predictOutput": "Predict the Output",
+    "thinkAboutIt": "Think About It",
+    "markComplete": "Mark lesson complete",
+    "moduleComplete": "Module complete! Take the quiz to unlock the next module."
+  },
+  "moduleCard": {
+    "module": "Module",
+    "lessons": "lessons",
+    "quiz": "Quiz",
+    "passToUnlock": "Pass Module {{prevOrder}} quiz (≥60%) to unlock"
+  },
+  "modulePage": {
+    "module": "Module",
+    "of": "of",
+    "lessonsComplete": "lessons complete",
+    "lessons": "Lessons",
+    "concepts": "concepts",
+    "exercises": "exercises",
+    "miniProject": "Mini Project",
+    "steps": "steps",
+    "optional": "Optional",
+    "moduleQuiz": "Module Quiz",
+    "bestScore": "Best score",
+    "passed": "Passed",
+    "tryAgain": "Try again to improve",
+    "quizDesc": "8 questions · Pass with ≥60% to unlock next module",
+    "completeAllLessons": "Complete all lessons to unlock"
+  },
+  "project": {
+    "revealHint": "Reveal hint",
+    "checkSolution": "Check Solution",
+    "showSolution": "Show Solution",
+    "incorrect": "Your solution doesn't match the expected pattern yet."
+  },
+  "predict": {
+    "title": "Predict the Output",
+    "subtitle": "What will this code print?",
+    "placeholder": "Type the expected output...",
+    "notQuite": "Not quite!",
+    "expectedOutput": "Expected output:"
+  },
+  "thinking": {
+    "exercise": "Exercise"
+  },
+  "codeLabels": {
+    "javascript": "JavaScript",
+    "java": "Java"
+  },
+  "sidebar": {
+    "appName": "Java for JS Devs",
+    "interactiveCourse": "Interactive Course",
+    "overallProgress": "Overall Progress",
+    "lessons": "lessons",
+    "miniProject": "Mini Project",
+    "moduleQuiz": "Module Quiz",
+    "backToRoadmap": "← Back to Roadmap"
+  },
+  "topBar": {
+    "appName": "Java for JS Devs"
+  },
+  "aria": {
+    "openMenu": "Open menu",
+    "toggleLanguage": "Toggle language",
+    "toggleTheme": "Toggle theme",
+    "copyCode": "Copy code"
+  }
+}
