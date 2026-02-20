@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1771590365181,
+      "tag": "0000_late_dakota_north",
+      "breakpoints": true
+    }
+  ]
+}
