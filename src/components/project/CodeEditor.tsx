@@ -9,12 +9,12 @@ interface CodeEditorProps {
 
 export function CodeEditor({ value, onChange, disabled }: CodeEditorProps) {
   const { t } = useTranslation();
-  
+
   return (
-    <div className="rounded-lg overflow-hidden border border-surface-700">
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50/50 dark:bg-[#1a0000] border-b border-surface-700">
-        <span className="text-sm">☕</span>
-        <span className="text-xs font-semibold text-red-700 dark:text-java uppercase tracking-wider">{t('codeLabels.java', 'Java')}</span>
+    <div className="rounded-lg overflow-hidden border border-border-subtle">
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-java-glow border-b border-java/20">
+        <span className="w-2 h-2 rounded-full bg-java" />
+        <span className="text-xs font-semibold text-java uppercase tracking-wider">{t('codeLabels.java', 'Java')}</span>
       </div>
       <textarea
         value={value}
@@ -26,9 +26,9 @@ export function CodeEditor({ value, onChange, disabled }: CodeEditorProps) {
           disabled ? 'opacity-60 cursor-not-allowed' : '',
         )}
         style={{
-          background: '#111118',
+          background: 'var(--color-code-bg)',
           color: '#d4d4d4',
-          fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+          fontFamily: "var(--font-jetbrains), 'Fira Code', monospace",
           tabSize: 4,
         }}
       />

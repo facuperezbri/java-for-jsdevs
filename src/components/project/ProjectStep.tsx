@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { CheckCircle2, XCircle, Lightbulb, Eye } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -56,10 +58,10 @@ export function ProjectStep({ step, stepNumber, isComplete, onComplete }: Projec
   return (
     <div
       className={cn(
-        'rounded-xl border p-6 space-y-4 transition-all',
+        'rounded-xl border p-6 space-y-4 transition-all shadow-editorial',
         done
-          ? 'bg-green-50/50 border-green-200'
-          : 'bg-white border-surface-700'
+          ? 'bg-module-green/5 border-module-green/20'
+          : 'bg-surface-1 border-border-subtle'
       )}
     >
       <div className="flex items-center gap-3">
@@ -67,17 +69,17 @@ export function ProjectStep({ step, stepNumber, isComplete, onComplete }: Projec
           className={cn(
             'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0',
             done
-              ? 'bg-green-100 text-green-700'
-              : 'bg-blue-100 text-blue-700'
+              ? 'bg-module-green/10 text-module-green'
+              : 'bg-module-blue/10 text-module-blue'
           )}
         >
           {done ? <CheckCircle2 size={16} /> : stepNumber}
         </div>
-        <h3 className="text-lg font-semibold text-gray-900">{step.title}</h3>
+        <h3 className="font-display text-lg font-semibold text-text-primary">{step.title}</h3>
       </div>
 
       <div className="prose prose-sm max-w-none">
-        <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">{step.instructions}</p>
+        <p className="text-text-secondary leading-relaxed whitespace-pre-line">{step.instructions}</p>
       </div>
 
       <CodeEditor
@@ -90,15 +92,15 @@ export function ProjectStep({ step, stepNumber, isComplete, onComplete }: Projec
       {!done && step.hints.length > 0 && (
         <div className="space-y-2">
           {step.hints.slice(0, revealedHints).map((hint, i) => (
-            <div key={i} className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800/50 animate-fade-in">
-              <Lightbulb size={14} className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-800 dark:text-amber-300">{hint}</p>
+            <div key={i} className="flex items-start gap-2 p-3 rounded-lg border-l-[3px] border-l-amber-500 bg-amber-500/5 animate-fade-in">
+              <Lightbulb size={14} className="text-amber-500 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-text-secondary">{hint}</p>
             </div>
           ))}
           {revealedHints < step.hints.length && (
             <button
               onClick={handleRevealHint}
-              className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+              className="flex items-center gap-1.5 text-xs text-amber-500 hover:text-amber-400 transition-colors"
             >
               <Eye size={12} />
               {t('project.revealHint', 'Reveal hint')} ({revealedHints + 1}/{step.hints.length})
@@ -123,11 +125,11 @@ export function ProjectStep({ step, stepNumber, isComplete, onComplete }: Projec
 
       {/* Feedback */}
       {submitted && !valid && !done && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 animate-fade-in">
-          <XCircle size={14} className="text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
-          <div className="text-xs text-red-700 dark:text-red-300">
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-module-red/5 border border-module-red/20 animate-fade-in">
+          <XCircle size={14} className="text-module-red flex-shrink-0 mt-0.5" />
+          <div className="text-xs text-text-secondary">
             <p>{t('project.incorrect', "Your solution doesn't match the expected pattern yet.")}</p>
-            <button onClick={handleRetry} className="underline mt-1 hover:text-red-800 dark:hover:text-red-200">
+            <button onClick={handleRetry} className="underline mt-1 hover:text-text-primary">
               {t('common.tryAgain', 'Try again')}
             </button>
           </div>
@@ -135,9 +137,9 @@ export function ProjectStep({ step, stepNumber, isComplete, onComplete }: Projec
       )}
 
       {done && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800/50 animate-fade-in">
-          <CheckCircle2 size={14} className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-green-800 dark:text-green-300 leading-relaxed">{step.explanation}</p>
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-module-green/5 border border-module-green/20 animate-fade-in">
+          <CheckCircle2 size={14} className="text-module-green flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-text-secondary leading-relaxed">{step.explanation}</p>
         </div>
       )}
     </div>
