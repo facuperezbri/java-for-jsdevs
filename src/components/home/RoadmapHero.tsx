@@ -3,10 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { BookOpen, Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import { useProgress } from '../../context/ProgressContext';
 import { useCurriculum } from '../../data/curriculum';
 import { ProgressBar } from '../ui/ProgressBar';
 import { Button } from '../ui/Button';
+import { staggerContainer, staggerItem } from '../../lib/motion';
 
 export function RoadmapHero() {
   const { progress } = useProgress();
@@ -41,40 +43,47 @@ export function RoadmapHero() {
   }
 
   return (
-    <div className="bg-surface-900 dark:bg-surface-950 rounded-2xl border border-surface-700 shadow-sm p-8 mb-8">
+    <motion.div
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+      className="bg-gradient-to-br from-surface-1 to-surface-2 rounded-2xl border border-border-subtle shadow-editorial p-8 mb-8"
+    >
       <div className="flex flex-col md:flex-row md:items-center gap-6">
-        <div className="flex-1">
+        <motion.div variants={staggerItem} className="flex-1">
           <div className="flex items-center gap-2 mb-3">
             <BookOpen size={20} className="text-java" />
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">{t('roadmap.learningPath', 'Learning Path')}</span>
+            <span className="text-sm font-medium text-text-tertiary uppercase tracking-wider">{t('roadmap.learningPath', 'Learning Path')}</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h1 className="font-display text-display-lg text-text-primary mb-2">
             {t('roadmap.title', 'Java for JavaScript Developers')}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-5 max-w-lg">
+          {/* Decorative rule */}
+          <div className="h-0.5 w-16 bg-gradient-to-r from-java to-java/30 rounded-full mb-4" />
+          <p className="text-text-secondary mb-5 max-w-lg">
             {t('roadmap.description', 'Master Java by comparing it to what you already know. Every concept is shown side-by-side with its JavaScript equivalent.')}
           </p>
 
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-sm text-text-secondary">
                 {completedLessons === 0
                   ? t('roadmap.startJourney', 'Start your journey')
                   : t('roadmap.lessonsComplete', '{{completed}} of {{total}} lessons complete', { completed: completedLessons, total: totalLessons })}
               </span>
-              <span className="text-sm text-gray-900 dark:text-gray-100 font-semibold">{Math.round(overallPercent)}%</span>
+              <span className="text-sm text-text-primary font-semibold">{Math.round(overallPercent)}%</span>
             </div>
             <ProgressBar value={overallPercent} color="default" />
           </div>
-        </div>
+        </motion.div>
 
-        <div className="flex-shrink-0">
+        <motion.div variants={staggerItem} className="flex-shrink-0">
           <Button size="lg" onClick={handleContinue}>
             <Zap size={18} />
             {completedLessons === 0 ? t('roadmap.startLearning', 'Start learning') : t('roadmap.continue', 'Continue')}
           </Button>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
