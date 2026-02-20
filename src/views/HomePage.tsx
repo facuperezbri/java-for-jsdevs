@@ -44,7 +44,7 @@ export function HomePage() {
         className="mt-12 text-center"
       >
         <p className="text-sm text-text-tertiary">
-          {t('home.stats', '4 modules · 20 lessons · 4 quizzes · Built for React/JS developers')}
+          {t('home.stats', '4 modules · 22 lessons · 4 quizzes · Built for React/JS developers')}
         </p>
       </motion.div>
     </div>

@@ -5,7 +5,7 @@ Interactive course teaching Java through the lens of JavaScript — side-by-side
 ## Features
 
 - **4 modules**: Basic Syntax & Types, OOP, Collections, Spring
-- **20 lessons** with JS vs Java code comparisons
+- **22 lessons** with JS vs Java code comparisons
 - **4 quizzes** with progress tracking
 - **Hands-on mini-projects** per module
 - **Bilingual support** (English, Spanish) via i18next

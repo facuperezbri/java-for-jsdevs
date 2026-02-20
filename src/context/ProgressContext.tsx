@@ -47,13 +47,19 @@ interface ProgressContextValue {
 const ProgressContext = createContext<ProgressContextValue | null>(null);
 
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
   const [progress, setProgress] = useState<AppProgress>(loadFromStorage);
   const [loaded, setLoaded] = useState(false);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Load from API when signed in
+  // Load from API when signed in (wait for Clerk to finish loading first)
   useEffect(() => {
+    if (!isAuthLoaded) {
+      setProgress(loadFromStorage());
+      setLoaded(true);
+      return;
+    }
+
     if (!isSignedIn) {
       setProgress(loadFromStorage());
       setLoaded(true);
@@ -65,9 +71,14 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       try {
         if (cancelled) return;
         const res = await fetch('/api/progress', { credentials: 'include' });
-        if (!res.ok || cancelled) return;
+        if (cancelled) return;
+        if (!res.ok) {
+          setProgress(loadFromStorage());
+          if (!cancelled) setLoaded(true);
+          return;
+        }
         const data = (await res.json()) as AppProgress;
-        setProgress(data);
+        if (!cancelled) setProgress(data);
       } catch {
         setProgress(loadFromStorage());
       } finally {
@@ -78,7 +89,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [isSignedIn]);
+  }, [isAuthLoaded, isSignedIn]);
 
   // Persist: API when signed in, localStorage otherwise
   const persist = useCallback(
