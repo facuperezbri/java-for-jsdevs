@@ -1,3 +1,5 @@
+'use client';
+
 import { Menu, BookOpen, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from 'react-i18next';

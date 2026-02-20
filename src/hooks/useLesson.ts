@@ -1,22 +1,21 @@
 import { useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { useCurriculum } from '../data/curriculum';
 import { useProgress } from '../context/ProgressContext';
 
-export function useLesson() {
-  const { moduleId, lessonId } = useParams<{ moduleId: string; lessonId: string }>();
-  const navigate = useNavigate();
+export function useLesson(moduleId: string | undefined, lessonId: string | undefined) {
+  const router = useRouter();
   const { progress, markLessonComplete, isLessonComplete } = useProgress();
   const { CURRICULUM, getModule, getLesson } = useCurriculum();
 
   const module = useMemo(
     () => (moduleId ? getModule(moduleId) : undefined),
-    [moduleId]
+    [moduleId, getModule]
   );
 
   const lesson = useMemo(
     () => (moduleId && lessonId ? getLesson(moduleId, lessonId) : undefined),
-    [moduleId, lessonId]
+    [moduleId, lessonId, getLesson]
   );
 
   const { prevLesson, nextLesson } = useMemo(() => {
@@ -43,15 +42,15 @@ export function useLesson() {
 
   function goNext() {
     if (nextLesson && moduleId) {
-      navigate(`/module/${moduleId}/lesson/${nextLesson.id}`);
+      router.push(`/module/${moduleId}/lesson/${nextLesson.id}`);
     } else if (module && allLessonsComplete) {
-      navigate(`/module/${module.id}/quiz`);
+      router.push(`/module/${module.id}/quiz`);
     }
   }
 
   function goPrev() {
     if (prevLesson && moduleId) {
-      navigate(`/module/${moduleId}/lesson/${prevLesson.id}`);
+      router.push(`/module/${moduleId}/lesson/${prevLesson.id}`);
     }
   }
 
@@ -62,7 +61,7 @@ export function useLesson() {
       return sum + (progress.modules[m.id]?.completedLessonIds.length ?? 0);
     }, 0);
     return totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
-  }, [progress]);
+  }, [progress, CURRICULUM]);
 
   return {
     module,

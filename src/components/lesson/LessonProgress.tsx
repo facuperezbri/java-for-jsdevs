@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import type { Module } from '../../types';
 import { useProgress } from '../../context/ProgressContext';
 import { getModuleAccentClasses } from '../../lib/utils';
@@ -22,7 +24,7 @@ export function LessonProgress({ module, currentLessonId }: LessonProgressProps)
         return (
           <Link
             key={lesson.id}
-            to={`/module/${module.id}/lesson/${lesson.id}`}
+            href={`/module/${module.id}/lesson/${lesson.id}`}
             title={lesson.title}
             className={cn(
               'flex items-center justify-center transition-all duration-200',

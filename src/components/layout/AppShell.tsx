@@ -1,17 +1,24 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { cn } from '../../lib/utils';
 
-export function AppShell() {
+interface AppShellProps {
+  children: React.ReactNode;
+}
+
+export function AppShell({ children }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
-    setSidebarOpen(false);
-  }, [location.pathname]);
+    const id = requestAnimationFrame(() => setSidebarOpen(false));
+    return () => cancelAnimationFrame(id);
+  }, [pathname]);
 
   return (
     <div className="min-h-screen bg-surface-950 text-gray-900 dark:text-gray-100">
@@ -45,7 +52,7 @@ export function AppShell() {
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto pt-14 md:pt-0">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>

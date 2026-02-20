@@ -1,4 +1,6 @@
-import { useNavigate } from 'react-router-dom';
+'use client';
+
+import { useRouter } from 'next/navigation';
 import { BookOpen, Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useProgress } from '../../context/ProgressContext';
@@ -8,7 +10,7 @@ import { Button } from '../ui/Button';
 
 export function RoadmapHero() {
   const { progress } = useProgress();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { t } = useTranslation();
   const { CURRICULUM } = useCurriculum();
 
@@ -21,7 +23,7 @@ export function RoadmapHero() {
 
   function handleContinue() {
     if (progress.lastVisitedPath && progress.lastVisitedPath !== '/') {
-      navigate(progress.lastVisitedPath);
+      router.push(progress.lastVisitedPath);
       return;
     }
     // Find first incomplete lesson
@@ -29,13 +31,13 @@ export function RoadmapHero() {
       for (const lesson of mod.lessons) {
         const done = progress.modules[mod.id]?.completedLessonIds.includes(lesson.id);
         if (!done) {
-          navigate(`/module/${mod.id}/lesson/${lesson.id}`);
+          router.push(`/module/${mod.id}/lesson/${lesson.id}`);
           return;
         }
       }
     }
     // All done!
-    navigate(`/module/${CURRICULUM[0].id}/lesson/${CURRICULUM[0].lessons[0].id}`);
+    router.push(`/module/${CURRICULUM[0].id}/lesson/${CURRICULUM[0].lessons[0].id}`);
   }
 
   return (

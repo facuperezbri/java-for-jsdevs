@@ -1,4 +1,8 @@
-import { Link, useLocation, useParams } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { UserButton } from '@clerk/nextjs';
 import { BookOpen, CheckCircle2, Lock, ChevronRight, Trophy, Hammer } from 'lucide-react';
 import { useProgress } from '../../context/ProgressContext';
 import { useCurriculum } from '../../data/curriculum';
@@ -15,8 +19,9 @@ interface SidebarProps {
 
 export function Sidebar({ onClose }: SidebarProps) {
   const { progress } = useProgress();
-  const location = useLocation();
-  const { moduleId, lessonId } = useParams();
+  const pathname = usePathname();
+  const moduleId = pathname.match(/\/module\/([^/]+)/)?.[1];
+  const lessonId = pathname.match(/\/lesson\/([^/]+)/)?.[1];
   const { theme, toggleTheme } = useTheme();
   const { i18n, t } = useTranslation();
   const { CURRICULUM } = useCurriculum();
@@ -79,7 +84,7 @@ export function Sidebar({ onClose }: SidebarProps) {
             <div key={mod.id} className="mb-1">
               {/* Module header */}
               <Link
-                to={unlocked ? `/module/${mod.id}` : '#'}
+                href={unlocked ? `/module/${mod.id}` : '#'}
                 onClick={unlocked ? onClose : undefined}
                 className={cn(
                   'flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-colors group',
@@ -116,7 +121,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                     return (
                       <Link
                         key={lesson.id}
-                        to={`/module/${mod.id}/lesson/${lesson.id}`}
+                        href={`/module/${mod.id}/lesson/${lesson.id}`}
                         onClick={onClose}
                         className={cn(
                           'flex items-center gap-2.5 px-3 py-1.5 mx-2 rounded-md text-xs transition-colors',
@@ -138,11 +143,11 @@ export function Sidebar({ onClose }: SidebarProps) {
                   {/* Project link */}
                   {mod.project && (
                     <Link
-                      to={`/module/${mod.id}/project`}
+                      href={`/module/${mod.id}/project`}
                       onClick={onClose}
                       className={cn(
                         'flex items-center gap-2.5 px-3 py-1.5 mx-2 rounded-md text-xs transition-colors',
-                        location.pathname.endsWith('/project')
+                        pathname.endsWith('/project')
                           ? `${accent.bgLight} ${accent.text} font-medium`
                           : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-surface-800'
                       )}
@@ -155,11 +160,11 @@ export function Sidebar({ onClose }: SidebarProps) {
                   {/* Quiz link */}
                   {completed === total && total > 0 && (
                     <Link
-                      to={`/module/${mod.id}/quiz`}
+                      href={`/module/${mod.id}/quiz`}
                       onClick={onClose}
                       className={cn(
                         'flex items-center gap-2.5 px-3 py-1.5 mx-2 rounded-md text-xs transition-colors',
-                        location.pathname.endsWith('/quiz')
+                        pathname.endsWith('/quiz')
                           ? `${accent.bgLight} ${accent.text} font-medium`
                           : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-surface-800'
                       )}
@@ -183,10 +188,11 @@ export function Sidebar({ onClose }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="px-5 py-3 border-t border-surface-700 flex-shrink-0">
-        <Link to="/" onClick={onClose} className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+      <div className="px-5 py-3 border-t border-surface-700 flex-shrink-0 flex items-center justify-between">
+        <Link href="/" onClick={onClose} className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
           {t('sidebar.backToRoadmap', '← Back to Roadmap')}
         </Link>
+        <UserButton afterSignOutUrl="/login" />
       </div>
     </div>
   );

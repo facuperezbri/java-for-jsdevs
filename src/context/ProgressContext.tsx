@@ -1,16 +1,29 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+'use client';
+
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useAuth } from '@clerk/nextjs';
 import type { AppProgress, QuizAttempt } from '../types';
 
 const STORAGE_KEY = 'java_jsdevs_progress';
 
 const defaultProgress: AppProgress = { modules: {} };
 
-function loadProgress(): AppProgress {
+function loadFromStorage(): AppProgress {
+  if (typeof window === 'undefined') return defaultProgress;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? (JSON.parse(raw) as AppProgress) : defaultProgress;
   } catch {
     return defaultProgress;
+  }
+}
+
+function saveToStorage(progress: AppProgress) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  } catch {
+    // ignore
   }
 }
 
@@ -34,11 +47,70 @@ interface ProgressContextValue {
 const ProgressContext = createContext<ProgressContextValue | null>(null);
 
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
-  const [progress, setProgress] = useState<AppProgress>(loadProgress);
+  const { isSignedIn } = useAuth();
+  const [progress, setProgress] = useState<AppProgress>(loadFromStorage);
+  const [loaded, setLoaded] = useState(false);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load from API when signed in
+  useEffect(() => {
+    if (!isSignedIn) {
+      setProgress(loadFromStorage());
+      setLoaded(true);
+      return;
+    }
+
+    let cancelled = false;
+    async function fetchProgress() {
+      try {
+        if (cancelled) return;
+        const res = await fetch('/api/progress', { credentials: 'include' });
+        if (!res.ok || cancelled) return;
+        const data = (await res.json()) as AppProgress;
+        setProgress(data);
+      } catch {
+        setProgress(loadFromStorage());
+      } finally {
+        if (!cancelled) setLoaded(true);
+      }
+    }
+    fetchProgress();
+    return () => {
+      cancelled = true;
+    };
+  }, [isSignedIn]);
+
+  // Persist: API when signed in, localStorage otherwise
+  const persist = useCallback(
+    (next: AppProgress) => {
+      if (!loaded) return;
+
+      if (isSignedIn) {
+        if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+        saveTimeoutRef.current = setTimeout(async () => {
+          saveTimeoutRef.current = null;
+          try {
+            await fetch('/api/progress', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify(next),
+            });
+          } catch {
+            // fallback to localStorage on error
+            saveToStorage(next);
+          }
+        }, 300);
+      } else {
+        saveToStorage(next);
+      }
+    },
+    [isSignedIn, loaded]
+  );
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-  }, [progress]);
+    if (loaded) persist(progress);
+  }, [progress, loaded, persist]);
 
   const ensureModule = useCallback(
     (prev: AppProgress, moduleId: string): AppProgress => {

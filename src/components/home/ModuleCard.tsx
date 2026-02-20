@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import { Lock, CheckCircle2, ChevronRight, Trophy } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -114,7 +116,7 @@ export function ModuleCard({ module }: ModuleCardProps) {
   if (!unlocked) return cardContent;
 
   return (
-    <Link to={`/module/${module.id}`}>
+    <Link href={`/module/${module.id}`}>
       {cardContent}
     </Link>
   );

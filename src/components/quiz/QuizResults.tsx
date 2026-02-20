@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import { Trophy, CheckCircle2, XCircle, RotateCcw, ChevronRight, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -123,21 +125,21 @@ export function QuizResults({ score, totalQuestions, answers, questions, module,
         </Button>
 
         {passed && nextModule ? (
-          <Link to={`/module/${nextModule.id}`}>
+          <Link href={`/module/${nextModule.id}`}>
             <Button>
               {t('quizResults.start', 'Start')} {nextModule.title}
               <ChevronRight size={16} />
             </Button>
           </Link>
         ) : passed ? (
-          <Link to="/">
+          <Link href="/">
             <Button>
               {t('quizResults.backHome', 'Back to home')}
               <ChevronRight size={16} />
             </Button>
           </Link>
         ) : (
-          <Link to={`/module/${module.id}`}>
+          <Link href={`/module/${module.id}`}>
             <Button variant="secondary">
               {t('quizResults.reviewLessons', 'Review lessons')}
             </Button>
