@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DndContext,
@@ -97,6 +97,11 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selectedToken, setSelectedToken] = useState<string | null>(null);
   const { t } = useTranslation();
+
+  const tokensWithIds = useMemo(
+    () => drill.tokenBank.map((label, i) => ({ id: `${drill.id}-t${i}`, label })),
+    [drill.id, drill.tokenBank]
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -207,8 +212,9 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
   function handleCheck() {
     const newResults: Record<string, boolean> = {};
     for (const slot of drill.slots) {
-      const placed = slotValues[slot.id];
-      newResults[slot.id] = placed === slot.expected;
+      const placedId = slotValues[slot.id];
+      const placedLabel = placedId ? tokensWithIds.find((t) => t.id === placedId)?.label : null;
+      newResults[slot.id] = placedLabel === slot.expected;
     }
     setResults(newResults);
     setSubmitted(true);
@@ -230,7 +236,8 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
         const slot = drill.slots[slotIndex];
         if (!slot) return <span key={i}>{part}</span>;
 
-        const finalValue = done ? slot.expected : slotValues[slot.id];
+        const rawVal = slotValues[slot.id];
+        const finalValue = done ? slot.expected : (rawVal ? tokensWithIds.find((t) => t.id === rawVal)?.label ?? null : null);
 
         return (
           <DroppableSlot
@@ -306,15 +313,15 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
           <div className="space-y-2">
             <p className="text-xs text-text-tertiary font-medium">{t('drill.tokenBank', 'Token Bank — drag or click to place:')}</p>
             <div className="flex flex-wrap gap-2">
-              {drill.tokenBank.map((token) => (
+              {tokensWithIds.map((t) => (
                 <div
-                  key={token}
-                  onClick={() => !usedTokens.has(token) && handleTokenClick(token)}
+                  key={t.id}
+                  onClick={() => !usedTokens.has(t.id) && handleTokenClick(t.id)}
                 >
                   <DraggableToken
-                    id={token}
-                    label={token}
-                    disabled={usedTokens.has(token)}
+                    id={t.id}
+                    label={t.label}
+                    disabled={usedTokens.has(t.id)}
                   />
                 </div>
               ))}
@@ -325,7 +332,7 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
         <DragOverlay>
           {activeId ? (
             <div className="px-3 py-1.5 rounded-lg text-sm font-mono bg-module-blue/15 text-module-blue border border-module-blue/30 shadow-editorial-lg">
-              {activeId}
+              {tokensWithIds.find((t) => t.id === activeId)?.label ?? activeId}
             </div>
           ) : null}
         </DragOverlay>

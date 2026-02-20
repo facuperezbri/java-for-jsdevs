@@ -79,7 +79,7 @@ export function CodeChallenge({ challenge, isComplete, onComplete }: CodeChallen
             placeholder={blank.hint ?? '...'}
             style={{ width: `${maxLen + 2}ch` }}
             className={cn(
-              'inline-block mx-2 my-1 px-2 py-0.5 rounded text-sm font-mono border text-white placeholder-text-muted outline-none transition-all',
+              'inline-block mx-2 my-1 px-2 py-0.5 rounded text-sm font-mono border text-text-primary dark:text-white placeholder-text-muted outline-none transition-all',
               isCorrect && 'border-module-green bg-module-green/10',
               isWrong && 'border-module-red bg-module-red/10',
               !submitted && 'border-border bg-surface-3 focus:border-module-blue',
