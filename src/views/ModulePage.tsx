@@ -1,5 +1,8 @@
+'use client';
+
 import { useEffect } from 'react';
-import { Link, useParams, Navigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ChevronRight, Clock, CheckCircle2, Trophy, Lock, Hammer } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCurriculum } from '../data/curriculum';
@@ -9,33 +12,40 @@ import { ProgressBar } from '../components/ui/ProgressBar';
 import { Badge } from '../components/ui/Badge';
 import { cn } from '../lib/utils';
 
-export function ModulePage() {
-  const { moduleId } = useParams<{ moduleId: string }>();
+interface ModulePageProps {
+  moduleId: string;
+}
+
+export function ModulePage({ moduleId }: ModulePageProps) {
+  const router = useRouter();
   const { progress, setLastVisited } = useProgress();
   const { t } = useTranslation();
   const { CURRICULUM, getModule } = useCurriculum();
 
-  const module = getModule(moduleId ?? '');
-  if (!module) return <Navigate to="/" />;
+  const module = getModule(moduleId);
+  const unlocked = module ? isModuleUnlocked(module.order, CURRICULUM, progress) : false;
 
-  const unlocked = isModuleUnlocked(module.order, CURRICULUM, progress);
-  if (!unlocked) return <Navigate to="/" />;
+  useEffect(() => {
+    if (!module || !unlocked) {
+      router.replace('/');
+      return;
+    }
+    setLastVisited(`/module/${moduleId}`, moduleId);
+  }, [moduleId, module, unlocked, router, setLastVisited]);
+
+  if (!module || !unlocked) return null;
 
   const accent = getModuleAccentClasses(module.accentColor);
   const { completed, total, percent } = getModuleProgress(module, progress);
   const bestScore = getBestQuizScore(module.id, progress);
   const allLessonsComplete = completed === total;
 
-  useEffect(() => {
-    setLastVisited(`/module/${moduleId}`, moduleId);
-  }, [moduleId]);
-
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       {/* Module header */}
       <div className={cn('rounded-2xl border p-6 mb-8', accent.bgLight, 'border-' + module.accentColor + '/20')}>
         <div className="flex items-center gap-2 mb-4">
-          <Link to="/" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors">{t('common.home', 'Home')}</Link>
+          <Link href="/" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors">{t('common.home', 'Home')}</Link>
           <ChevronRight size={14} className="text-gray-600 dark:text-gray-400" />
           <span className="text-sm text-gray-800 dark:text-gray-300">{module.title}</span>
         </div>
@@ -68,7 +78,7 @@ export function ModulePage() {
           return (
             <Link
               key={lesson.id}
-              to={`/module/${module.id}/lesson/${lesson.id}`}
+              href={`/module/${module.id}/lesson/${lesson.id}`}
               className="flex items-center gap-4 p-4 bg-surface-900 dark:bg-surface-800 hover:bg-gray-50 dark:hover:bg-surface-700 border border-surface-700 hover:border-surface-600 rounded-xl transition-all shadow-sm group"
             >
               <div className={cn(
@@ -108,7 +118,7 @@ export function ModulePage() {
       {module.project && (
         <div className="mb-6">
           <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3">{t('modulePage.miniProject', 'Mini Project')}</h2>
-          <Link to={`/module/${module.id}/project`}>
+          <Link href={`/module/${module.id}/project`}>
             <div className={cn(
               'flex items-center gap-4 p-4 rounded-xl border transition-all',
               `${accent.bgLight} border-${module.accentColor}/20 hover:bg-${module.accentColor}/10`
@@ -139,7 +149,7 @@ export function ModulePage() {
       <div className="border-t border-surface-700 pt-6">
         <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3">{t('modulePage.moduleQuiz', 'Module Quiz')}</h2>
         {allLessonsComplete ? (
-          <Link to={`/module/${module.id}/quiz`}>
+          <Link href={`/module/${module.id}/quiz`}>
             <div className={cn(
               'flex items-center gap-4 p-4 rounded-xl border transition-all',
               bestScore !== null && bestScore >= 60

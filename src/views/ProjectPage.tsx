@@ -1,5 +1,8 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { Navigate, Link, useParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ChevronRight, Clock, Hammer, CheckCircle2 } from 'lucide-react';
 import { useCurriculum } from '../data/curriculum';
 import { useProgress } from '../context/ProgressContext';
@@ -9,32 +12,44 @@ import { ProjectStep } from '../components/project/ProjectStep';
 import { Badge } from '../components/ui/Badge';
 import { cn } from '../lib/utils';
 
-export function ProjectPage() {
-  const { moduleId } = useParams<{ moduleId: string }>();
+interface ProjectPageProps {
+  moduleId: string;
+}
+
+export function ProjectPage({ moduleId }: ProjectPageProps) {
+  const router = useRouter();
   const { progress, setLastVisited, completeProjectStep, isProjectStepComplete } = useProgress();
   const { CURRICULUM, getModule } = useCurriculum();
 
-  const module = getModule(moduleId ?? '');
-  if (!module) return <Navigate to="/" />;
+  const module = getModule(moduleId);
+  const unlocked = module ? isModuleUnlocked(module.order, CURRICULUM, progress) : false;
+  const project = module?.project;
 
-  const unlocked = isModuleUnlocked(module.order, CURRICULUM, progress);
-  if (!unlocked) return <Navigate to="/" />;
-
-  const project = module.project;
-  if (!project) return <Navigate to={`/module/${module.id}`} />;
-
-  const accent = getModuleAccentClasses(module.accentColor);
-
-  // Determine initial step from progress
-  const lastStepId = progress.modules[module.id]?.projectProgress?.lastStepId;
-  const lastStepIndex = lastStepId ? project.steps.findIndex((s) => s.id === lastStepId) : -1;
-  const initialStep = lastStepIndex >= 0 ? Math.min(lastStepIndex + 1, project.steps.length - 1) : 0;
+  const lastStepId = module ? progress.modules[module.id]?.projectProgress?.lastStepId : undefined;
+  const lastStepIndex = project && lastStepId ? project.steps.findIndex((s) => s.id === lastStepId) : -1;
+  const initialStep = project && lastStepIndex >= 0 ? Math.min(lastStepIndex + 1, project.steps.length - 1) : 0;
 
   const [currentStep, setCurrentStep] = useState(initialStep);
 
   useEffect(() => {
+    if (!module) {
+      router.replace('/');
+      return;
+    }
+    if (!unlocked) {
+      router.replace('/');
+      return;
+    }
+    if (!project) {
+      router.replace(`/module/${module.id}`);
+      return;
+    }
     setLastVisited(`/module/${module.id}/project`, module.id);
-  }, [module.id, setLastVisited]);
+  }, [moduleId, module, unlocked, project, router, setLastVisited]);
+
+  if (!module || !unlocked || !project) return null;
+
+  const accent = getModuleAccentClasses(module.accentColor);
 
   const completedStepIndices = new Set(
     project.steps
@@ -59,9 +74,9 @@ export function ProjectPage() {
     <div className="max-w-3xl mx-auto px-4 py-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-6 text-sm">
-        <Link to="/" className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors">Home</Link>
+        <Link href="/" className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors">Home</Link>
         <ChevronRight size={14} className="text-gray-400 dark:text-gray-500" />
-        <Link to={`/module/${module.id}`} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors">{module.title}</Link>
+        <Link href={`/module/${module.id}`} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors">{module.title}</Link>
         <ChevronRight size={14} className="text-gray-400 dark:text-gray-500" />
         <span className="text-gray-700 dark:text-gray-300">Mini Project</span>
       </div>
@@ -115,7 +130,7 @@ export function ProjectPage() {
           <h3 className="text-lg font-semibold text-green-800 dark:text-green-300 mb-1">Project Complete!</h3>
           <p className="text-sm text-green-700 dark:text-green-400 mb-4">You've finished all {project.steps.length} steps.</p>
           <Link
-            to={`/module/${module.id}`}
+            href={`/module/${module.id}`}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
           >
             Back to Module

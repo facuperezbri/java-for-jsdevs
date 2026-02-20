@@ -1,5 +1,8 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { useParams, Navigate, Link } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCurriculum } from '../data/curriculum';
 import { useProgress } from '../context/ProgressContext';
 import { isModuleUnlocked } from '../lib/utils';
@@ -10,8 +13,12 @@ import { ChevronLeft } from 'lucide-react';
 
 type Phase = 'answering' | 'results';
 
-export function QuizPage() {
-  const { moduleId } = useParams<{ moduleId: string }>();
+interface QuizPageProps {
+  moduleId: string;
+}
+
+export function QuizPage({ moduleId }: QuizPageProps) {
+  const router = useRouter();
   const { progress, saveQuizAttempt, setLastVisited } = useProgress();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -30,12 +37,22 @@ export function QuizPage() {
     : false;
 
   useEffect(() => {
-    if (moduleId) setLastVisited(`/module/${moduleId}/quiz`, moduleId);
-  }, [moduleId]);
+    if (!module) {
+      router.replace('/');
+      return;
+    }
+    if (!quiz) {
+      router.replace(`/module/${moduleId}`);
+      return;
+    }
+    if (!unlocked || !allLessonsComplete) {
+      router.replace(`/module/${moduleId}`);
+      return;
+    }
+    setLastVisited(`/module/${moduleId}/quiz`, moduleId);
+  }, [moduleId, module, quiz, unlocked, allLessonsComplete, router, setLastVisited]);
 
-  if (!module) return <Navigate to="/" />;
-  if (!quiz) return <Navigate to={`/module/${moduleId}`} />;
-  if (!unlocked || !allLessonsComplete) return <Navigate to={`/module/${moduleId}`} />;
+  if (!module || !quiz || !unlocked || !allLessonsComplete) return null;
 
   function handleAnswer(key: string) {
     const question = quiz!.questions[currentIndex];
@@ -71,7 +88,7 @@ export function QuizPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <Link
-          to={`/module/${moduleId}`}
+          href={`/module/${moduleId}`}
           className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors"
         >
           <ChevronLeft size={16} />

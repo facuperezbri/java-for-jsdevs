@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLesson } from '../hooks/useLesson';
@@ -15,33 +17,41 @@ import { LessonNav } from '../components/lesson/LessonNav';
 import { LessonProgress } from '../components/lesson/LessonProgress';
 import { Button } from '../components/ui/Button';
 
-export function LessonPage() {
-  const { module, lesson, prevLesson, nextLesson, isComplete, allLessonsComplete, complete, goNext, goPrev } = useLesson();
+interface LessonPageProps {
+  moduleId: string;
+  lessonId: string;
+}
+
+export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
+  const { module, lesson, prevLesson, nextLesson, isComplete, allLessonsComplete, complete, goNext, goPrev } = useLesson(moduleId, lessonId);
   const {
     progress, setLastVisited, revealExercise,
     completeChallenge, isChallengeComplete,
     completeDrill, isDrillComplete,
     completePrediction, isPredictionComplete,
   } = useProgress();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { t } = useTranslation();
   const { CURRICULUM } = useCurriculum();
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  if (!module || !lesson) return <Navigate to="/" />;
+  const unlocked = module ? isModuleUnlocked(module.order, CURRICULUM, progress) : false;
 
-  const unlocked = isModuleUnlocked(module.order, CURRICULUM, progress);
-  if (!unlocked) return <Navigate to="/" />;
+  useEffect(() => {
+    if (!module || !lesson || !unlocked) {
+      router.replace('/');
+      return;
+    }
+    setLastVisited(`/module/${module.id}/lesson/${lesson.id}`, module.id, lesson.id);
+  }, [lesson?.id, module?.id, setLastVisited, module, lesson, unlocked, router]);
+
+  if (!module || !lesson || !unlocked) return null;
 
   const lessonIndex = module.lessons.findIndex((l) => l.id === lesson.id);
   const revealedFromContext = progress.modules[module.id]?.revealedExercises?.[lesson.id] || [];
 
   const allExercisesRevealed =
     lesson.exercises.length === 0 || revealedFromContext.length >= lesson.exercises.length;
-
-  useEffect(() => {
-    setLastVisited(`/module/${module.id}/lesson/${lesson.id}`, module.id, lesson.id);
-  }, [lesson.id, module.id, setLastVisited]);
 
   function handleExerciseReveal(exerciseId: string) {
     revealExercise(module!.id, lesson!.id, exerciseId);
@@ -67,7 +77,7 @@ export function LessonPage() {
   }
 
   function handleGoToQuiz() {
-    navigate(`/module/${module!.id}/quiz`);
+    router.push(`/module/${module!.id}/quiz`);
   }
 
   return (
