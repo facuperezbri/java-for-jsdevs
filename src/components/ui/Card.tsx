@@ -11,9 +11,9 @@ export function Card({ variant = 'default', className, children, ...props }: Car
       className={cn(
         'rounded-xl',
         {
-          'bg-surface-800 border border-surface-700 shadow-sm': variant === 'default',
-          'bg-surface-800 border border-surface-700 shadow-md shadow-zinc-200/50': variant === 'elevated',
-          'bg-transparent border border-surface-700': variant === 'outlined',
+          'bg-surface-1 border border-border-subtle shadow-editorial': variant === 'default',
+          'bg-surface-1 border border-border-subtle shadow-editorial-lg': variant === 'elevated',
+          'bg-transparent border border-border-subtle': variant === 'outlined',
         },
         className
       )}
