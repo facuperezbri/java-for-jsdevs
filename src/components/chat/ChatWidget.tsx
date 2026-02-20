@@ -16,7 +16,7 @@ interface Message {
 }
 
 export function ChatWidget() {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('ui');
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
