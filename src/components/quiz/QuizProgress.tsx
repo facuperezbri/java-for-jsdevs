@@ -23,7 +23,7 @@ export function QuizProgress({ current, answers, questionIds, module }: QuizProg
             key={id}
             className={cn(
               'flex-1 h-1.5 rounded-full transition-all duration-300',
-              isActive ? accent.bg : answered ? 'bg-green-500/60' : 'bg-surface-700'
+              isActive ? accent.bg : answered ? 'bg-module-green/60' : 'bg-surface-3'
             )}
           />
         );
