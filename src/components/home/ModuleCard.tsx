@@ -74,7 +74,7 @@ export function ModuleCard({ module }: ModuleCardProps) {
           </div>
         </div>
 
-        <div className="flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0">
           {!unlocked ? (
             <div className="w-8 h-8 rounded-full bg-surface-3 flex items-center justify-center">
               <Lock size={14} className="text-text-muted" />
@@ -84,7 +84,10 @@ export function ModuleCard({ module }: ModuleCardProps) {
               <CheckCircle2 size={16} className="text-module-green" />
             </div>
           ) : (
-            <ChevronRight size={18} className="text-text-muted mt-0.5" />
+            <>
+              <Badge variant={module.accentColor} size="sm">{total} {t('moduleCard.lessons', 'lessons')}</Badge>
+              <ChevronRight size={18} className="text-text-muted mt-0.5" />
+            </>
           )}
         </div>
       </div>
@@ -116,13 +119,6 @@ export function ModuleCard({ module }: ModuleCardProps) {
           </span>
         </div>
       )}
-
-      {/* Lesson count badge */}
-      <div className="absolute top-4 right-4">
-        {unlocked && !isFullyComplete && (
-          <Badge variant={module.accentColor} size="sm">{total} {t('moduleCard.lessons', 'lessons')}</Badge>
-        )}
-      </div>
     </motion.div>
   );
 
