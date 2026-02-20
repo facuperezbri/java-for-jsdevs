@@ -46,13 +46,32 @@ export function Sidebar({ onClose }: SidebarProps) {
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <button
-            onClick={() => i18n.changeLanguage(i18n.language.startsWith('es') ? 'en' : 'es')}
-            className="px-2 py-1 rounded-md text-xs font-bold text-text-tertiary hover:text-text-primary hover:bg-surface-2 transition-colors"
-            title={t('aria.toggleLanguage', 'Toggle language')}
-          >
-            {i18n.language.startsWith('es') ? 'ES' : 'EN'}
-          </button>
+          <div className="flex items-center gap-0.5 rounded-lg border border-border-subtle p-0.5">
+            <button
+              onClick={() => i18n.changeLanguage('en')}
+              className={cn(
+                'px-2 py-1 rounded text-base transition-all',
+                i18n.language.startsWith('en')
+                  ? 'bg-surface-2 opacity-100'
+                  : 'opacity-50 hover:opacity-75'
+              )}
+              title="English"
+            >
+              🇺🇸
+            </button>
+            <button
+              onClick={() => i18n.changeLanguage('es')}
+              className={cn(
+                'px-2 py-1 rounded text-base transition-all',
+                i18n.language.startsWith('es')
+                  ? 'bg-surface-2 opacity-100'
+                  : 'opacity-50 hover:opacity-75'
+              )}
+              title="Español"
+            >
+              🇪🇸
+            </button>
+          </div>
           <button
             onClick={toggleTheme}
             className="p-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 transition-colors"

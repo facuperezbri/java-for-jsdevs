@@ -3,6 +3,7 @@
 import { Menu, BookOpen, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import { cn } from '../../lib/utils';
 
 interface TopBarProps {
   onMenuClick: () => void;
@@ -11,10 +12,6 @@ interface TopBarProps {
 export function TopBar({ onMenuClick }: TopBarProps) {
   const { theme, toggleTheme } = useTheme();
   const { i18n, t } = useTranslation();
-
-  const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language.startsWith('es') ? 'en' : 'es');
-  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-14 px-4 bg-surface-1 border-b border-border-subtle md:hidden">
@@ -34,13 +31,32 @@ export function TopBar({ onMenuClick }: TopBarProps) {
         </div>
       </div>
       <div className="flex items-center gap-1">
-        <button
-          onClick={toggleLanguage}
-          className="px-2 py-1.5 rounded-lg text-xs font-bold text-text-tertiary hover:text-text-primary hover:bg-surface-2 transition-colors"
-          aria-label={t('aria.toggleLanguage', 'Toggle language')}
-        >
-          {i18n.language.startsWith('es') ? 'ES' : 'EN'}
-        </button>
+        <div className="flex items-center gap-0.5 rounded-lg border border-border-subtle p-0.5">
+          <button
+            onClick={() => i18n.changeLanguage('en')}
+            className={cn(
+              'px-2 py-1 rounded text-base transition-all',
+              i18n.language.startsWith('en')
+                ? 'bg-surface-2 opacity-100'
+                : 'opacity-50 hover:opacity-75'
+            )}
+            aria-label="English"
+          >
+            🇺🇸
+          </button>
+          <button
+            onClick={() => i18n.changeLanguage('es')}
+            className={cn(
+              'px-2 py-1 rounded text-base transition-all',
+              i18n.language.startsWith('es')
+                ? 'bg-surface-2 opacity-100'
+                : 'opacity-50 hover:opacity-75'
+            )}
+            aria-label="Español"
+          >
+            🇪🇸
+          </button>
+        </div>
         <button
           onClick={toggleTheme}
           className="p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-surface-2 transition-colors"
