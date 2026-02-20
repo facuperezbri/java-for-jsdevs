@@ -1,7 +1,7 @@
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+'use client';
+
 import { Copy, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface CodeBlockProps {
@@ -12,12 +12,48 @@ interface CodeBlockProps {
 
 export function CodeBlock({ code, language, showLineNumbers = false }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
+  const [SyntaxHighlighter, setSyntaxHighlighter] = useState<React.ComponentType<{
+    language: string;
+    style: object;
+    showLineNumbers?: boolean;
+    customStyle?: object;
+    codeTagProps?: object;
+    children: React.ReactNode;
+  }> | null>(null);
+  const [style, setStyle] = useState<object>({});
   const { t } = useTranslation();
+
+  useEffect(() => {
+    Promise.all([
+      import('react-syntax-highlighter').then((mod) => mod.Prism),
+      import('react-syntax-highlighter/dist/cjs/styles/prism').then((mod) => mod.vscDarkPlus),
+    ]).then(([Highlighter, vscDarkPlus]) => {
+      setSyntaxHighlighter(() => Highlighter as React.ComponentType<{
+        language: string;
+        style: object;
+        showLineNumbers?: boolean;
+        customStyle?: object;
+        codeTagProps?: object;
+        children: React.ReactNode;
+      }>);
+      setStyle(vscDarkPlus);
+    });
+  }, []);
 
   async function handleCopy() {
     await navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  }
+
+  if (!SyntaxHighlighter || Object.keys(style).length === 0) {
+    return (
+      <div className="relative rounded-lg overflow-hidden border border-border-subtle p-4" style={{ background: 'var(--color-code-bg)' }}>
+        <pre className="text-sm font-mono text-[#d4d4d4] overflow-x-auto m-0">
+          <code>{code.trim()}</code>
+        </pre>
+      </div>
+    );
   }
 
   return (
@@ -31,7 +67,7 @@ export function CodeBlock({ code, language, showLineNumbers = false }: CodeBlock
       </button>
       <SyntaxHighlighter
         language={language}
-        style={vscDarkPlus}
+        style={style}
         showLineNumbers={showLineNumbers}
         customStyle={{
           margin: 0,
