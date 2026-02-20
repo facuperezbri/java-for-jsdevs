@@ -8,9 +8,10 @@ interface CodeBlockProps {
   code: string;
   language: 'javascript' | 'java' | 'bash' | 'xml';
   showLineNumbers?: boolean;
+  lineHeight?: number;
 }
 
-export function CodeBlock({ code, language, showLineNumbers = false }: CodeBlockProps) {
+export function CodeBlock({ code, language, showLineNumbers = false, lineHeight = 1.6 }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const [SyntaxHighlighter, setSyntaxHighlighter] = useState<React.ComponentType<{
     language: string;
@@ -49,7 +50,7 @@ export function CodeBlock({ code, language, showLineNumbers = false }: CodeBlock
   if (!SyntaxHighlighter || Object.keys(style).length === 0) {
     return (
       <div className="relative rounded-lg overflow-hidden border border-border-subtle p-4" style={{ background: 'var(--color-code-bg)' }}>
-        <pre className="text-sm font-mono text-[#d4d4d4] overflow-x-auto m-0">
+        <pre className="text-sm font-mono text-[#d4d4d4] overflow-x-auto m-0" style={{ lineHeight }}>
           <code>{code.trim()}</code>
         </pre>
       </div>
@@ -74,7 +75,7 @@ export function CodeBlock({ code, language, showLineNumbers = false }: CodeBlock
           padding: '1rem',
           background: 'var(--color-code-bg)',
           fontSize: '0.8125rem',
-          lineHeight: '1.6',
+          lineHeight: String(lineHeight),
           fontFamily: "var(--font-jetbrains), 'Fira Code', monospace",
         }}
         codeTagProps={{ style: { fontFamily: 'inherit' } }}

@@ -70,7 +70,7 @@ function DroppableSlot({
       ref={setNodeRef}
       onClick={onClick}
       className={cn(
-        'inline-flex items-center justify-center min-w-[5rem] px-2 py-0.5 mx-1 rounded border text-sm font-mono transition-all',
+        'inline-flex items-center justify-center min-w-[4rem] px-2 py-0.5 mx-1.5 my-1 rounded border text-sm font-mono transition-all align-baseline',
         value
           ? submitted && isCorrect
             ? 'bg-module-green/10 border-module-green/30 text-module-green'
@@ -98,10 +98,19 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
   const [selectedToken, setSelectedToken] = useState<string | null>(null);
   const { t } = useTranslation();
 
-  const tokensWithIds = useMemo(
-    () => drill.tokenBank.map((label, i) => ({ id: `${drill.id}-t${i}`, label })),
-    [drill.id, drill.tokenBank]
-  );
+  const tokensWithIds = useMemo(() => {
+    const tokens = drill.tokenBank.map((label, i) => ({
+      id: `${drill.id}-t${i}`,
+      label,
+    }));
+    // Fisher-Yates shuffle for random order
+    const shuffled = [...tokens];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }, [drill.id, drill.tokenBank]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -209,12 +218,20 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
     }
   }
 
+  function isSlotCorrect(placedLabel: string | null, slot: { expected: string }): boolean {
+    if (!placedLabel) return false;
+    if (slot.expected === 'true' || slot.expected === 'false') {
+      return placedLabel === 'true' || placedLabel === 'false';
+    }
+    return placedLabel === slot.expected;
+  }
+
   function handleCheck() {
     const newResults: Record<string, boolean> = {};
     for (const slot of drill.slots) {
       const placedId = slotValues[slot.id];
       const placedLabel = placedId ? tokensWithIds.find((t) => t.id === placedId)?.label : null;
-      newResults[slot.id] = placedLabel === slot.expected;
+      newResults[slot.id] = isSlotCorrect(placedLabel ?? null, slot);
     }
     setResults(newResults);
     setSubmitted(true);
@@ -237,7 +254,7 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
         if (!slot) return <span key={i}>{part}</span>;
 
         const rawVal = slotValues[slot.id];
-        const finalValue = done ? slot.expected : (rawVal ? tokensWithIds.find((t) => t.id === rawVal)?.label ?? null : null);
+        const finalValue = rawVal ? tokensWithIds.find((t) => t.id === rawVal)?.label ?? null : null;
 
         return (
           <DroppableSlot
@@ -284,7 +301,7 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
               <span className="w-2 h-2 rounded-full bg-js" />
               <span className="text-xs font-semibold text-js-dark uppercase tracking-wider">{t('codeLabels.javascript', 'JavaScript')}</span>
             </div>
-            <CodeBlock code={drill.jsCode} language="javascript" />
+            <CodeBlock code={drill.jsCode} language="javascript" lineHeight={1.9} />
           </div>
 
           {/* Java side with drop zones */}
@@ -295,11 +312,12 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
             </div>
             <div className="overflow-x-auto">
               <pre
-                className="p-4 text-sm leading-relaxed whitespace-pre-wrap"
+                className="p-4 text-sm whitespace-pre-wrap"
                 style={{
                   background: 'var(--color-code-bg)',
                   fontFamily: "var(--font-jetbrains), 'Fira Code', monospace",
                   color: '#d4d4d4',
+                  lineHeight: 1.9,
                 }}
               >
                 {renderTemplate()}
