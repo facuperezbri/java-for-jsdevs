@@ -108,7 +108,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                 onClick={unlocked ? onClose : undefined}
                 className={cn(
                   'flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-colors group relative',
-                  unlocked ? 'hover:bg-surface-2 cursor-pointer' : 'cursor-not-allowed opacity-50',
+                  unlocked ? 'hover:bg-surface-2 cursor-pointer' : 'cursor-not-allowed',
                   isActiveModule && !lessonId ? 'bg-surface-2 border-l-[3px] border-l-java' : ''
                 )}
               >
@@ -116,7 +116,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                   {mod.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className={cn('text-sm font-medium truncate', isActiveModule ? 'text-text-primary' : 'text-text-secondary group-hover:text-text-primary')}>
+                  <div className={cn('text-sm font-medium truncate', isActiveModule ? 'text-text-primary' : unlocked ? 'text-text-secondary group-hover:text-text-primary' : 'text-text-secondary')}>
                     {mod.title}
                   </div>
                   {unlocked && (
@@ -149,7 +149,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                           'flex items-center gap-2.5 px-3 py-1.5 mx-2 rounded-md text-xs transition-colors',
                           isActiveLesson
                             ? `${accent.bgLight} ${accent.text} font-medium`
-                            : 'text-text-tertiary hover:text-text-primary hover:bg-surface-2'
+                            : 'text-text-secondary hover:text-text-primary hover:bg-surface-2'
                         )}
                       >
                         {isLessonComplete ? (
@@ -171,7 +171,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                         'flex items-center gap-2.5 px-3 py-1.5 mx-2 rounded-md text-xs transition-colors',
                         pathname.endsWith('/project')
                           ? `${accent.bgLight} ${accent.text} font-medium`
-                          : 'text-text-tertiary hover:text-text-primary hover:bg-surface-2'
+                          : 'text-text-secondary hover:text-text-primary hover:bg-surface-2'
                       )}
                     >
                       <Hammer size={12} className="flex-shrink-0" />
@@ -188,7 +188,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                         'flex items-center gap-2.5 px-3 py-1.5 mx-2 rounded-md text-xs transition-colors',
                         pathname.endsWith('/quiz')
                           ? `${accent.bgLight} ${accent.text} font-medium`
-                          : 'text-text-tertiary hover:text-text-primary hover:bg-surface-2'
+                          : 'text-text-secondary hover:text-text-primary hover:bg-surface-2'
                       )}
                     >
                       <Trophy size={12} className="flex-shrink-0" />
