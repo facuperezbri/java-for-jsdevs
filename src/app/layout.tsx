@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 import { Providers } from './providers';
 import { I18nProvider } from './I18nProvider';
+import { ChatWidget } from '@/src/components/chat/ChatWidget';
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -50,6 +51,7 @@ export default function RootLayout({
             <I18nProvider>
               <Providers>
                 {children}
+                <ChatWidget />
               </Providers>
             </I18nProvider>
           </ClerkProvider>
