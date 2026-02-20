@@ -74,9 +74,9 @@ export function LoginBrandingPanel() {
               </div>
               <div className="pl-4">
                 <span className="text-module-purple">return</span>{' '}
-                <span className="text-module-green">{`\`Hello, \${`}</span>
+                <span className="text-module-green">{'`Hello, ${'}</span>
                 <span className="text-text-primary">name</span>
-                <span className="text-module-green">{`}\``}</span>
+                <span className="text-module-green">{'}`'}</span>
                 <span className="text-text-muted">;</span>
               </div>
               <div>
