@@ -1,26 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --color-surface-950: #f9fafb;
-    --color-surface-900: #ffffff;
-    --color-surface-800: #ffffff;
-    --color-surface-700: #e4e4e7;
-    --color-surface-600: #d4d4d8;
-    --color-surface-500: #a1a1aa;
+    /* Warm cream light theme */
+    --color-page-bg: #f8f5f0;
+    --color-surface-1: #ffffff;
+    --color-surface-2: #f3f0eb;
+    --color-surface-3: #e8e4df;
+    --color-border-subtle: #e2ded8;
+    --color-border: #d4d0ca;
+    --color-text-primary: #1a1612;
+    --color-text-secondary: #5c574f;
+    --color-text-tertiary: #8a8479;
+    --color-text-muted: #b0a99e;
+    --color-code-bg: #111520;
   }
 
   .dark {
-    --color-surface-950: #09090b;
-    --color-surface-900: #18181b;
-    --color-surface-800: #27272a;
-    --color-surface-700: #3f3f46;
-    --color-surface-600: #52525b;
-    --color-surface-500: #a1a1aa;
+    /* Warm navy dark theme */
+    --color-page-bg: #0c0f16;
+    --color-surface-1: #141820;
+    --color-surface-2: #1c2030;
+    --color-surface-3: #252a3a;
+    --color-border-subtle: #2a2f3f;
+    --color-border: #363c50;
+    --color-text-primary: #f0ece6;
+    --color-text-secondary: #a8a298;
+    --color-text-tertiary: #7a7568;
+    --color-text-muted: #4d4940;
+    --color-code-bg: #111520;
   }
 
   *, *::before, *::after {
@@ -34,14 +44,15 @@
 
   body {
     margin: 0;
-    background-color: var(--color-surface-950);
-    color: #111827;
-    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--color-page-bg);
+    color: var(--color-text-primary);
     min-height: 100vh;
+    line-height: 1.6;
   }
 
-  .dark body {
-    color: #f9fafb;
+  /* Serif display headings */
+  h1, h2, h3 {
+    font-family: var(--font-fraunces), Georgia, serif;
   }
 
   /* Remove default button styles */
@@ -63,28 +74,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #f4f4f5;
-  }
-
-  .dark ::-webkit-scrollbar-track {
-    background: #27272a;
+    background: var(--color-surface-2);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #d4d4d8;
+    background: var(--color-border);
     border-radius: 3px;
   }
 
-  .dark ::-webkit-scrollbar-thumb {
-    background: #52525b;
-  }
-
   ::-webkit-scrollbar-thumb:hover {
-    background: #a1a1aa;
-  }
-
-  .dark ::-webkit-scrollbar-thumb:hover {
-    background: #71717a;
+    background: var(--color-text-muted);
   }
 
   /* Syntax highlighter overrides */
@@ -96,10 +95,20 @@
 @layer utilities {
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: #d4d4d8 #f4f4f5;
+    scrollbar-color: var(--color-border) var(--color-surface-2);
   }
+}
 
-  .dark .scrollbar-thin {
-    scrollbar-color: #52525b #27272a;
-  }
+/* Grain texture overlay */
+.grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
 }
