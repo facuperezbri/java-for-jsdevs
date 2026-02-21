@@ -7,6 +7,7 @@ import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
+import { TypewriterText } from '@/src/components/chat/TypewriterText';
 
 interface Message {
   id: string;
@@ -243,12 +244,21 @@ export function ChatWidget() {
                   )}
                 >
                   <div className="whitespace-pre-wrap break-words">
-                    {m.content || (m.isStreaming ? (
+                    {m.content ? (
+                      m.role === 'assistant' ? (
+                        <TypewriterText
+                          content={m.content}
+                          isStreaming={m.isStreaming ?? false}
+                        />
+                      ) : (
+                        m.content
+                      )
+                    ) : m.isStreaming ? (
                       <span className="inline-flex items-center gap-1">
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                         {t('chat.thinking')}
                       </span>
-                    ) : null)}
+                    ) : null}
                   </div>
                 </div>
               ))}
