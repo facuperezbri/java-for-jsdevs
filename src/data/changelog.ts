@@ -1,4 +1,4 @@
-export const APP_VERSION = '2.0.0';
+export const APP_VERSION = '2.0.1';
 
 export interface ChangelogEntry {
   version: string;
@@ -11,6 +11,14 @@ export interface ChangelogEntry {
 }
 
 export const CHANGELOG: ChangelogEntry[] = [
+  {
+    version: '2.0.1',
+    date: '2026-02-21',
+    changes: [
+      { type: 'feat', title: 'Typewriter effect for chat assistant messages' },
+      { type: 'feat', title: 'Chat translations (EN/ES)' },
+    ],
+  },
   {
     version: '2.0.0',
     date: '2026-02-20',
