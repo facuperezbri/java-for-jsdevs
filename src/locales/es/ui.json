@@ -131,5 +131,19 @@
     "toggleLanguage": "Cambiar idioma",
     "toggleTheme": "Cambiar tema",
     "copyCode": "Copiar código"
+  },
+  "chat": {
+    "title": "Chat",
+    "subtitle": "Pregunta sobre Java",
+    "ariaOpenChat": "Abrir chat",
+    "ariaCloseChat": "Cerrar chat",
+    "emptyState": "Pregúntame lo que quieras sobre Java",
+    "emptyExample": "ej. ¿Cuál es la diferencia entre == y equals()?",
+    "thinking": "Pensando...",
+    "placeholder": "Escribe tu pregunta...",
+    "errorFailed": "Error al obtener respuesta",
+    "errorRateLimit": "Límite de solicitudes excedido. Intenta más tarde.",
+    "errorModelNotFound": "Modelo no encontrado",
+    "errorGeneric": "Algo salió mal"
   }
 }
