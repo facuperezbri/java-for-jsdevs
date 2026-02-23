@@ -40,7 +40,7 @@ function DraggableToken({ id, label, disabled }: { id: string; label: string; di
         isDragging && 'opacity-30',
         disabled
           ? 'bg-surface-2 text-text-muted border-border-subtle cursor-not-allowed'
-          : 'bg-module-blue/10 text-module-blue border-module-blue/20 hover:bg-module-blue/15 cursor-grab active:cursor-grabbing shadow-sm'
+          : 'bg-accent/10 text-accent border-accent/20 hover:bg-accent/15 cursor-grab active:cursor-grabbing'
       )}
     >
       {label}
@@ -76,9 +76,9 @@ function DroppableSlot({
             ? 'bg-module-green/10 border-module-green/30 text-module-green'
             : submitted && isWrong
               ? 'bg-module-red/10 border-module-red/30 text-module-red'
-              : 'bg-module-blue/10 border-module-blue/20 text-module-blue hover:bg-module-blue/15 cursor-pointer'
+              : 'bg-accent/10 border-accent/20 text-accent hover:bg-accent/15 cursor-pointer'
           : isOver
-            ? 'bg-module-blue/10 border-module-blue/30 border-dashed'
+            ? 'bg-accent/10 border-accent/30 border-dashed'
             : 'bg-surface-2 border-border border-dashed text-text-muted'
       )}
     >
@@ -245,7 +245,7 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
 
   // Parse Java template and render with drop zones
   function renderTemplate() {
-    const parts = drill.javaTemplate.split(/(___SLOT_\d+___)/g);
+    const parts = drill.targetTemplate.split(/(___SLOT_\d+___)/g);
     return parts.map((part, i) => {
       const match = part.match(/___SLOT_(\d+)___/);
       if (match) {
@@ -279,8 +279,8 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
       className={cn(
         'rounded-xl border p-5 space-y-4 transition-all animate-fade-in',
         done
-          ? 'bg-module-green/5 border-module-green/20 shadow-editorial'
-          : 'bg-surface-1 border-border-subtle shadow-editorial'
+          ? 'bg-module-green/5 border-module-green/20'
+          : 'bg-surface-1 border-border-subtle'
       )}
     >
       <div className="flex gap-3">
@@ -295,27 +295,27 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
 
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {/* JS side */}
+          {/* Source side */}
           <div className="rounded-xl border border-border-subtle overflow-hidden">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-js-muted border-b border-js/20">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-2 border-b border-border-subtle">
               <span className="w-2 h-2 rounded-full bg-js" />
-              <span className="text-xs font-semibold text-js-dark uppercase tracking-wider">{t('codeLabels.javascript', 'JavaScript')}</span>
+              <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">{drill.sourceLabel}</span>
             </div>
-            <CodeBlock code={drill.jsCode} language="javascript" lineHeight={1.9} />
+            <CodeBlock code={drill.sourceCode} language="javascript" lineHeight={1.9} />
           </div>
 
-          {/* Java side with drop zones */}
+          {/* Target side with drop zones */}
           <div className="rounded-xl border border-border-subtle overflow-hidden">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-java-glow border-b border-java/20">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-2 border-b border-border-subtle">
               <span className="w-2 h-2 rounded-full bg-java" />
-              <span className="text-xs font-semibold text-java uppercase tracking-wider">{t('codeLabels.java', 'Java')}</span>
+              <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">{drill.targetLabel}</span>
             </div>
             <div className="overflow-x-auto">
               <pre
                 className="p-4 text-sm whitespace-pre-wrap"
                 style={{
                   background: 'var(--color-code-bg)',
-                  fontFamily: "var(--font-jetbrains), 'Fira Code', monospace",
+                  fontFamily: "var(--font-geist-mono), ui-monospace, monospace",
                   color: '#d4d4d4',
                   lineHeight: 1.9,
                 }}
@@ -349,7 +349,7 @@ export function TranslationDrillExercise({ drill, index, isComplete, onComplete 
 
         <DragOverlay>
           {activeId ? (
-            <div className="px-3 py-1.5 rounded-lg text-sm font-mono bg-module-blue/15 text-module-blue border border-module-blue/30 shadow-editorial-lg">
+            <div className="px-3 py-1.5 rounded-lg text-sm font-mono bg-accent/15 text-accent border border-accent/30 shadow-soft">
               {tokensWithIds.find((t) => t.id === activeId)?.label ?? activeId}
             </div>
           ) : null}

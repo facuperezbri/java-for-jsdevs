@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import type { Module } from '../../types';
 import { useProgress } from '../../context/ProgressContext';
 import { getModuleAccentClasses } from '../../lib/utils';
@@ -15,30 +16,32 @@ interface LessonProgressProps {
 export function LessonProgress({ module, currentLessonId }: LessonProgressProps) {
   const { isLessonComplete } = useProgress();
   const accent = getModuleAccentClasses(module.accentColor);
+  const pathname = usePathname();
+
+  // Extract pathId from URL
+  const pathMatch = pathname.match(/\/path\/([^/]+)/);
+  const pathId = pathMatch?.[1] ?? 'java';
 
   return (
     <div className="flex items-center gap-1.5">
       {module.lessons.map((lesson, idx) => {
         const isActive = lesson.id === currentLessonId;
-        const isComplete = isLessonComplete(module.id, lesson.id);
+        const isComplete = isLessonComplete(pathId, module.id, lesson.id);
         return (
           <div key={lesson.id} className="flex items-center">
             <Link
-              href={`/module/${module.id}/lesson/${lesson.id}`}
+              href={`/path/${pathId}/module/${module.id}/lesson/${lesson.id}`}
               title={lesson.title}
-              className={cn(
-                'flex items-center justify-center transition-all duration-200',
-                isActive ? 'scale-110' : ''
-              )}
+              className="flex items-center justify-center transition-all duration-200"
             >
               {isComplete ? (
                 <CheckCircle2 size={16} className="text-module-green" />
               ) : (
                 <div className={cn(
-                  'w-2.5 h-2.5 rounded-full border transition-colors',
+                  'w-3 h-3 rounded-full transition-colors',
                   isActive
-                    ? `${accent.bg} border-transparent ring-2 ring-offset-2 ring-offset-page-bg ${accent.ring}`
-                    : 'bg-transparent border-border hover:border-text-muted'
+                    ? `${accent.bg}`
+                    : 'bg-surface-3 hover:bg-border'
                 )} />
               )}
             </Link>

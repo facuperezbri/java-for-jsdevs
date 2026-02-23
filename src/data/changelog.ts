@@ -1,4 +1,4 @@
-export const APP_VERSION = '2.0.1';
+export const APP_VERSION = '3.0.0';
 
 export interface ChangelogEntry {
   version: string;
@@ -11,6 +11,22 @@ export interface ChangelogEntry {
 }
 
 export const CHANGELOG: ChangelogEntry[] = [
+  {
+    version: '3.0.0',
+    date: '2026-02-21',
+    description:
+      'Major platform update: multi-path learning with a complete React path.',
+    changes: [
+      { type: 'feat', title: 'Multi-path platform: choose between Java and React learning paths' },
+      { type: 'feat', title: 'New React path: 5 modules, 25 lessons with class ↔ hooks comparisons' },
+      { type: 'feat', title: 'Path selection landing page' },
+      { type: 'feat', title: 'Generic code comparison system (supports any language pair)' },
+      { type: 'refactor', title: 'Path-scoped progress with automatic migration' },
+      { type: 'refactor', title: 'URL restructure: /path/[pathId]/module/...' },
+      { type: 'feat', title: 'Legacy URL redirects for backward compatibility' },
+      { type: 'feat', title: 'Rebrand to Learning for Devs' },
+    ],
+  },
   {
     version: '2.0.1',
     date: '2026-02-21',

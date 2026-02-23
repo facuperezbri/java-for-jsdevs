@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 interface CodeBlockProps {
   code: string;
-  language: 'javascript' | 'java' | 'bash' | 'xml';
+  language: string;
   showLineNumbers?: boolean;
   lineHeight?: number;
 }
@@ -58,7 +58,7 @@ export function CodeBlock({ code, language, showLineNumbers = false, lineHeight 
   }
 
   return (
-    <div className="relative group rounded-lg overflow-hidden border border-border-subtle hover:border-border transition-colors">
+    <div className="relative group rounded-xl overflow-hidden border border-border-subtle">
       <button
         onClick={handleCopy}
         className="absolute top-2 right-2 z-10 p-1.5 rounded-md bg-surface-3/80 text-text-secondary hover:text-text-primary hover:bg-surface-3 transition-all opacity-0 group-hover:opacity-100 shadow-sm"
@@ -74,9 +74,9 @@ export function CodeBlock({ code, language, showLineNumbers = false, lineHeight 
           margin: 0,
           padding: '1rem',
           background: 'var(--color-code-bg)',
-          fontSize: '0.8125rem',
+          fontSize: '0.875rem',
           lineHeight: String(lineHeight),
-          fontFamily: "var(--font-jetbrains), 'Fira Code', monospace",
+          fontFamily: "var(--font-geist-mono), ui-monospace, monospace",
         }}
         codeTagProps={{ style: { fontFamily: 'inherit' } }}
       >

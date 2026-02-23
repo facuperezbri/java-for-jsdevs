@@ -58,7 +58,7 @@ export function ProjectStep({ step, stepNumber, isComplete, onComplete }: Projec
   return (
     <div
       className={cn(
-        'rounded-xl border p-6 space-y-4 transition-all shadow-editorial',
+        'rounded-xl border p-6 space-y-4 transition-all',
         done
           ? 'bg-module-green/5 border-module-green/20'
           : 'bg-surface-1 border-border-subtle'

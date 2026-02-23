@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { useLesson } from '../hooks/useLesson';
 import { useProgress } from '../context/ProgressContext';
-import { useCurriculum } from '../data/curriculum';
+import { usePathCurriculum } from '../data/curriculum';
 import { isModuleUnlocked } from '../lib/utils';
 import { LessonHeader } from '../components/lesson/LessonHeader';
 import { ConceptBlock } from '../components/lesson/ConceptBlock';
@@ -20,12 +20,13 @@ import { Button } from '../components/ui/Button';
 import { staggerContainer, staggerItem } from '../lib/motion';
 
 interface LessonPageProps {
+  pathId: string;
   moduleId: string;
   lessonId: string;
 }
 
-export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
-  const { module, lesson, prevLesson, nextLesson, isComplete, allLessonsComplete, complete, goNext, goPrev } = useLesson(moduleId, lessonId);
+export function LessonPage({ pathId, moduleId, lessonId }: LessonPageProps) {
+  const { module, lesson, prevLesson, nextLesson, isComplete, allLessonsComplete, complete, goNext, goPrev } = useLesson(pathId, moduleId, lessonId);
   const {
     progress, setLastVisited, revealExercise,
     completeChallenge, isChallengeComplete,
@@ -34,41 +35,41 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
   } = useProgress();
   const router = useRouter();
   const { t } = useTranslation();
-  const { CURRICULUM } = useCurriculum();
+  const { CURRICULUM } = usePathCurriculum(pathId);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const unlocked = module ? isModuleUnlocked(module.order, CURRICULUM, progress) : false;
+  const unlocked = module ? isModuleUnlocked(module.order, CURRICULUM, progress, pathId) : false;
 
   useEffect(() => {
     if (!module || !lesson || !unlocked) {
-      router.replace('/');
+      router.replace(`/path/${pathId}`);
       return;
     }
-    setLastVisited(`/module/${module.id}/lesson/${lesson.id}`, module.id, lesson.id);
-  }, [lesson?.id, module?.id, setLastVisited, module, lesson, unlocked, router]);
+    setLastVisited(`/path/${pathId}/module/${module.id}/lesson/${lesson.id}`, pathId, module.id, lesson.id);
+  }, [lesson?.id, module?.id, setLastVisited, module, lesson, unlocked, router, pathId]);
 
   if (!module || !lesson || !unlocked) return null;
 
   const lessonIndex = module.lessons.findIndex((l) => l.id === lesson.id);
-  const revealedFromContext = progress.modules[module.id]?.revealedExercises?.[lesson.id] || [];
+  const revealedFromContext = progress.paths[pathId]?.modules[module.id]?.revealedExercises?.[lesson.id] || [];
 
   const allExercisesRevealed =
     lesson.exercises.length === 0 || revealedFromContext.length >= lesson.exercises.length;
 
   function handleExerciseReveal(exerciseId: string) {
-    revealExercise(module!.id, lesson!.id, exerciseId);
+    revealExercise(pathId, module!.id, lesson!.id, exerciseId);
   }
 
   function handleChallengeComplete(challengeId: string) {
-    completeChallenge(module!.id, lesson!.id, challengeId);
+    completeChallenge(pathId, module!.id, lesson!.id, challengeId);
   }
 
   function handleDrillComplete(drillId: string) {
-    completeDrill(module!.id, lesson!.id, drillId);
+    completeDrill(pathId, module!.id, lesson!.id, drillId);
   }
 
   function handlePredictionComplete(predictionId: string) {
-    completePrediction(module!.id, lesson!.id, predictionId);
+    completePrediction(pathId, module!.id, lesson!.id, predictionId);
   }
 
   function handleMarkComplete() {
@@ -79,7 +80,7 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
   }
 
   function handleGoToQuiz() {
-    router.push(`/module/${module!.id}/quiz`);
+    router.push(`/path/${pathId}/module/${module!.id}/quiz`);
   }
 
   return (
@@ -87,7 +88,7 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
-      className="max-w-5xl mx-auto px-4 py-8"
+      className="max-w-3xl mx-auto px-4 py-8"
     >
       {/* Lesson position dots */}
       <motion.div variants={staggerItem} className="flex justify-between items-center mb-6">
@@ -105,15 +106,15 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
       </motion.div>
 
       {/* Concepts (with inline challenges) */}
-      <div className="space-y-10 mb-10">
+      <div className="space-y-16 mb-10">
         {lesson.concepts.map((concept, idx) => (
           <div key={concept.id}>
-            {idx > 0 && <div className="h-px bg-border-subtle mb-10" />}
+            {idx > 0 && <div className="h-px bg-border-subtle mb-16" />}
             <ConceptBlock
               concept={concept}
               isChallengeComplete={
                 concept.challenge
-                  ? isChallengeComplete(module.id, lesson.id, concept.challenge.id)
+                  ? isChallengeComplete(pathId, module.id, lesson.id, concept.challenge.id)
                   : undefined
               }
               onChallengeComplete={concept.challenge ? handleChallengeComplete : undefined}
@@ -138,7 +139,7 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
               key={drill.id}
               drill={drill}
               index={idx}
-              isComplete={isDrillComplete(module.id, lesson.id, drill.id)}
+              isComplete={isDrillComplete(pathId, module.id, lesson.id, drill.id)}
               onComplete={handleDrillComplete}
             />
           ))}
@@ -161,7 +162,7 @@ export function LessonPage({ moduleId, lessonId }: LessonPageProps) {
               key={exercise.id}
               exercise={exercise}
               index={idx}
-              isComplete={isPredictionComplete(module.id, lesson.id, exercise.id)}
+              isComplete={isPredictionComplete(pathId, module.id, lesson.id, exercise.id)}
               onComplete={handlePredictionComplete}
             />
           ))}

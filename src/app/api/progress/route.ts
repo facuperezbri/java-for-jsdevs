@@ -27,7 +27,7 @@ export async function GET() {
 
     const progress: AppProgress = row[0]?.progress
       ? (row[0].progress as AppProgress)
-      : { modules: {} };
+      : { paths: {} };
 
     return NextResponse.json(progress);
   } catch (err) {

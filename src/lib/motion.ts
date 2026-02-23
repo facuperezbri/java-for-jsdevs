@@ -6,50 +6,50 @@ export const staggerContainer: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
+      staggerChildren: 0.05,
+      delayChildren: 0.05,
     },
   },
 };
 
 // Individual stagger item
 export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 8 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] },
   },
 };
 
 // Full-page reveal
 export const pageReveal: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 10 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] },
   },
 };
 
 // Horizontal slide (for quiz cards, tabs)
 export const slideTransition: Variants = {
-  enter: { x: 40, opacity: 0 },
+  enter: { x: 20, opacity: 0 },
   center: {
     x: 0,
     opacity: 1,
-    transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] },
   },
   exit: {
-    x: -40,
+    x: -20,
     opacity: 0,
-    transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] },
   },
 };
 
 // Spring scale (for quiz results, score reveals)
 export const springScale: Variants = {
-  hidden: { scale: 0.8, opacity: 0 },
+  hidden: { scale: 0.9, opacity: 0 },
   visible: {
     scale: 1,
     opacity: 1,
@@ -71,6 +71,6 @@ export const expandCollapse: Variants = {
     height: 'auto',
     opacity: 1,
     overflow: 'hidden',
-    transition: { height: { duration: 0.3 }, opacity: { duration: 0.25, delay: 0.05 } },
+    transition: { height: { duration: 0.25 }, opacity: { duration: 0.2, delay: 0.05 } },
   },
 };

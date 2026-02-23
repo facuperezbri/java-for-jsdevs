@@ -116,7 +116,7 @@ export function CodeChallenge({ challenge, isComplete, onComplete }: CodeChallen
           className="p-4 text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap"
           style={{
             background: 'var(--color-code-bg)',
-            fontFamily: "var(--font-jetbrains), 'Fira Code', monospace",
+            fontFamily: "var(--font-geist-mono), ui-monospace, monospace",
             color: '#d4d4d4',
           }}
         >

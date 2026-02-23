@@ -1,6 +1,5 @@
 import { cn } from '../../lib/utils';
 import type { Module } from '../../types';
-import { getModuleAccentClasses } from '../../lib/utils';
 
 interface QuizProgressProps {
   current: number;
@@ -10,9 +9,7 @@ interface QuizProgressProps {
   module: Module;
 }
 
-export function QuizProgress({ current, answers, questionIds, module }: QuizProgressProps) {
-  const accent = getModuleAccentClasses(module.accentColor);
-
+export function QuizProgress({ current, answers, questionIds }: QuizProgressProps) {
   return (
     <div className="flex items-center gap-2 mb-6">
       {questionIds.map((id, idx) => {
@@ -23,7 +20,7 @@ export function QuizProgress({ current, answers, questionIds, module }: QuizProg
             key={id}
             className={cn(
               'flex-1 h-1.5 rounded-full transition-all duration-300',
-              isActive ? accent.bg : answered ? 'bg-module-green/60' : 'bg-surface-3'
+              isActive ? 'bg-accent' : answered ? 'bg-module-green/60' : 'bg-surface-3'
             )}
           />
         );

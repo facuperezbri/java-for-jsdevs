@@ -40,13 +40,13 @@ export function ThinkingExercise({ exercise, index, isRevealed, onReveal }: Thin
     <div className={cn(
       'rounded-xl border p-5 space-y-4 transition-all duration-300 animate-fade-in',
       state === 'answer-revealed'
-        ? 'bg-module-green/5 border-module-green/20 shadow-editorial'
-        : 'bg-surface-1 border-border-subtle shadow-editorial'
+        ? 'bg-module-green/5 border-module-green/20'
+        : 'bg-surface-1 border-border-subtle'
     )}>
       {/* Question */}
       <div className="flex gap-3">
-        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-java/20 border border-java/30 flex items-center justify-center">
-          <Brain size={14} className="text-java" />
+        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center">
+          <Brain size={14} className="text-accent" />
         </div>
         <div>
           <div className="text-xs text-text-tertiary mb-1 uppercase tracking-wider font-medium">{t('thinking.exercise', 'Exercise')} {index + 1}</div>

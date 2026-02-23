@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import type { QuizQuestion, Module } from '../../types';
 import { Button } from '../ui/Button';
-import { getModuleAccentClasses } from '../../lib/utils';
 import { cn } from '../../lib/utils';
 import { slideTransition } from '../../lib/motion';
 
@@ -19,7 +18,6 @@ interface QuizCardProps {
 export function QuizCard({ question, module, onAnswer }: QuizCardProps) {
   const [selected, setSelected] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
-  const accent = getModuleAccentClasses(module.accentColor);
   const { t } = useTranslation();
 
   function handleSelect(key: string) {
@@ -52,18 +50,18 @@ export function QuizCard({ question, module, onAnswer }: QuizCardProps) {
 
       <div className="space-y-3 mb-6">
         {question.options.map((opt) => {
-          let optClass = 'bg-surface-1 border-border-subtle text-text-secondary hover:border-border hover:text-text-primary hover:shadow-editorial hover:-translate-y-0.5';
+          let optClass = 'bg-surface-1 border-border-subtle text-text-secondary hover:bg-surface-2 hover:text-text-primary';
 
           if (confirmed) {
             if (opt.key === question.correctKey) {
-              optClass = 'bg-module-green/5 border-module-green/30 text-module-green shadow-editorial';
+              optClass = 'bg-module-green/5 border-module-green/30 text-module-green';
             } else if (opt.key === selected) {
-              optClass = 'bg-module-red/5 border-module-red/30 text-module-red shadow-editorial';
+              optClass = 'bg-module-red/5 border-module-red/30 text-module-red';
             } else {
               optClass = 'bg-surface-1 border-border-subtle text-text-muted opacity-50';
             }
           } else if (opt.key === selected) {
-            optClass = `${accent.bgLight} ${accent.border} text-text-primary shadow-editorial transform scale-[1.01]`;
+            optClass = 'bg-accent-light border-accent text-text-primary';
           }
 
           return (
@@ -72,14 +70,14 @@ export function QuizCard({ question, module, onAnswer }: QuizCardProps) {
               onClick={() => handleSelect(opt.key)}
               disabled={confirmed}
               className={cn(
-                'w-full text-left px-4 py-3 rounded-xl border transition-all duration-300 ease-out flex items-center gap-3',
+                'w-full text-left px-4 py-3 rounded-xl border transition-all duration-200 ease-out flex items-center gap-3',
                 optClass,
                 !confirmed && 'cursor-pointer'
               )}
             >
               <div className={cn(
                 'w-6 h-6 rounded-full border flex items-center justify-center flex-shrink-0 text-xs font-bold',
-                opt.key === selected && !confirmed ? `${accent.border} ${accent.text}` : 'border-border text-text-muted'
+                opt.key === selected && !confirmed ? 'border-accent text-accent' : 'border-border text-text-muted'
               )}>
                 {confirmed && opt.key === question.correctKey ? (
                   <CheckCircle2 size={14} className="text-module-green" />
@@ -98,7 +96,7 @@ export function QuizCard({ question, module, onAnswer }: QuizCardProps) {
       {/* Explanation */}
       {confirmed && (
         <div className={cn(
-          'p-4 rounded-xl border mb-6 animate-fade-in shadow-editorial',
+          'p-4 rounded-xl border mb-6 animate-fade-in',
           isCorrect
             ? 'bg-module-green/5 border-module-green/20'
             : 'bg-module-red/5 border-module-red/20'

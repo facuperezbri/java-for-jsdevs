@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCurriculum } from '../data/curriculum';
+import { usePathCurriculum } from '../data/curriculum';
 import { useProgress } from '../context/ProgressContext';
 
-export function useLesson(moduleId: string | undefined, lessonId: string | undefined) {
+export function useLesson(pathId: string, moduleId: string | undefined, lessonId: string | undefined) {
   const router = useRouter();
   const { progress, markLessonComplete, isLessonComplete } = useProgress();
-  const { CURRICULUM, getModule, getLesson } = useCurriculum();
+  const { CURRICULUM, getModule, getLesson } = usePathCurriculum(pathId);
 
   const module = useMemo(
     () => (moduleId ? getModule(moduleId) : undefined),
@@ -27,41 +27,42 @@ export function useLesson(moduleId: string | undefined, lessonId: string | undef
     };
   }, [module, lessonId]);
 
-  const isComplete = moduleId && lessonId ? isLessonComplete(moduleId, lessonId) : false;
+  const isComplete = moduleId && lessonId ? isLessonComplete(pathId, moduleId, lessonId) : false;
 
   const allLessonsComplete = useMemo(() => {
     if (!module) return false;
-    return module.lessons.every((l) => isLessonComplete(module.id, l.id));
-  }, [module, isLessonComplete]);
+    return module.lessons.every((l) => isLessonComplete(pathId, module.id, l.id));
+  }, [module, isLessonComplete, pathId]);
 
   function complete() {
     if (moduleId && lessonId) {
-      markLessonComplete(moduleId, lessonId);
+      markLessonComplete(pathId, moduleId, lessonId);
     }
   }
 
   function goNext() {
     if (nextLesson && moduleId) {
-      router.push(`/module/${moduleId}/lesson/${nextLesson.id}`);
+      router.push(`/path/${pathId}/module/${moduleId}/lesson/${nextLesson.id}`);
     } else if (module && allLessonsComplete) {
-      router.push(`/module/${module.id}/quiz`);
+      router.push(`/path/${pathId}/module/${module.id}/quiz`);
     }
   }
 
   function goPrev() {
     if (prevLesson && moduleId) {
-      router.push(`/module/${moduleId}/lesson/${prevLesson.id}`);
+      router.push(`/path/${pathId}/module/${moduleId}/lesson/${prevLesson.id}`);
     }
   }
 
-  // Compute overall progress across all modules
+  // Compute overall progress across all modules in this path
   const overallProgress = useMemo(() => {
     const totalLessons = CURRICULUM.reduce((sum, m) => sum + m.lessons.length, 0);
+    const pp = progress.paths[pathId];
     const completedLessons = CURRICULUM.reduce((sum, m) => {
-      return sum + (progress.modules[m.id]?.completedLessonIds.length ?? 0);
+      return sum + (pp?.modules[m.id]?.completedLessonIds.length ?? 0);
     }, 0);
     return totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
-  }, [progress, CURRICULUM]);
+  }, [progress, CURRICULUM, pathId]);
 
   return {
     module,
