@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { TypewriterCursor } from './TypewriterCursor';
+import { MarkdownContent } from './MarkdownContent';
 
 interface TypewriterTextProps {
   content: string;
@@ -54,7 +55,7 @@ export function TypewriterText({
 
   return (
     <>
-      {displayed}
+      <MarkdownContent content={displayed} />
       {isTyping && <TypewriterCursor />}
     </>
   );
