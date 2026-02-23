@@ -2,17 +2,44 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
-import type { AppProgress, QuizAttempt } from '../types';
+import type { AppProgress, QuizAttempt, PathProgress } from '../types';
 
 const STORAGE_KEY = 'java_jsdevs_progress';
 
-const defaultProgress: AppProgress = { modules: {} };
+const defaultProgress: AppProgress = { paths: {} };
+
+function emptyPathProgress(): PathProgress {
+  return { modules: {} };
+}
+
+/** Migrate legacy flat `{ modules: {...} }` → `{ paths: { java: { modules: {...} } } }` */
+function migrateProgress(raw: Record<string, unknown>): AppProgress {
+  // Already migrated
+  if (raw.paths && typeof raw.paths === 'object') {
+    return raw as unknown as AppProgress;
+  }
+  // Legacy format: has `modules` at top level
+  if (raw.modules && typeof raw.modules === 'object') {
+    return {
+      paths: {
+        java: {
+          modules: raw.modules as PathProgress['modules'],
+          lastVisitedLessonPath: raw.lastVisitedPath as string | undefined,
+        },
+      },
+      activePath: 'java',
+      lastVisitedPath: raw.lastVisitedPath as string | undefined,
+    };
+  }
+  return defaultProgress;
+}
 
 function loadFromStorage(): AppProgress {
   if (typeof window === 'undefined') return defaultProgress;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as AppProgress) : defaultProgress;
+    if (!raw) return defaultProgress;
+    return migrateProgress(JSON.parse(raw));
   } catch {
     return defaultProgress;
   }
@@ -29,19 +56,19 @@ function saveToStorage(progress: AppProgress) {
 
 interface ProgressContextValue {
   progress: AppProgress;
-  markLessonComplete: (moduleId: string, lessonId: string) => void;
-  saveQuizAttempt: (moduleId: string, attempt: QuizAttempt) => void;
-  setLastVisited: (path: string, moduleId?: string, lessonId?: string) => void;
-  isLessonComplete: (moduleId: string, lessonId: string) => boolean;
-  revealExercise: (moduleId: string, lessonId: string, exerciseId: string) => void;
-  completeChallenge: (moduleId: string, lessonId: string, challengeId: string) => void;
-  isChallengeComplete: (moduleId: string, lessonId: string, challengeId: string) => boolean;
-  completeDrill: (moduleId: string, lessonId: string, drillId: string) => void;
-  isDrillComplete: (moduleId: string, lessonId: string, drillId: string) => boolean;
-  completePrediction: (moduleId: string, lessonId: string, predictionId: string) => void;
-  isPredictionComplete: (moduleId: string, lessonId: string, predictionId: string) => boolean;
-  completeProjectStep: (moduleId: string, stepId: string) => void;
-  isProjectStepComplete: (moduleId: string, stepId: string) => boolean;
+  markLessonComplete: (pathId: string, moduleId: string, lessonId: string) => void;
+  saveQuizAttempt: (pathId: string, moduleId: string, attempt: QuizAttempt) => void;
+  setLastVisited: (path: string, pathId?: string, moduleId?: string, lessonId?: string) => void;
+  isLessonComplete: (pathId: string, moduleId: string, lessonId: string) => boolean;
+  revealExercise: (pathId: string, moduleId: string, lessonId: string, exerciseId: string) => void;
+  completeChallenge: (pathId: string, moduleId: string, lessonId: string, challengeId: string) => void;
+  isChallengeComplete: (pathId: string, moduleId: string, lessonId: string, challengeId: string) => boolean;
+  completeDrill: (pathId: string, moduleId: string, lessonId: string, drillId: string) => void;
+  isDrillComplete: (pathId: string, moduleId: string, lessonId: string, drillId: string) => boolean;
+  completePrediction: (pathId: string, moduleId: string, lessonId: string, predictionId: string) => void;
+  isPredictionComplete: (pathId: string, moduleId: string, lessonId: string, predictionId: string) => boolean;
+  completeProjectStep: (pathId: string, moduleId: string, stepId: string) => void;
+  isProjectStepComplete: (pathId: string, moduleId: string, stepId: string) => boolean;
 }
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
@@ -77,8 +104,8 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
           if (!cancelled) setLoaded(true);
           return;
         }
-        const data = (await res.json()) as AppProgress;
-        if (!cancelled) setProgress(data);
+        const data = await res.json();
+        if (!cancelled) setProgress(migrateProgress(data as Record<string, unknown>));
       } catch {
         setProgress(loadFromStorage());
       } finally {
@@ -124,20 +151,56 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   }, [progress, loaded, persist]);
 
   const ensureModule = useCallback(
-    (prev: AppProgress, moduleId: string): AppProgress => {
-      if (prev.modules[moduleId]) return prev;
+    (prev: AppProgress, pathId: string, moduleId: string): AppProgress => {
+      const pathProg = prev.paths[pathId] ?? emptyPathProgress();
+      if (pathProg.modules[moduleId]) {
+        // Make sure the path exists in paths
+        if (!prev.paths[pathId]) {
+          return { ...prev, paths: { ...prev.paths, [pathId]: pathProg } };
+        }
+        return prev;
+      }
       return {
         ...prev,
-        modules: {
-          ...prev.modules,
-          [moduleId]: {
-            moduleId,
-            completedLessonIds: [],
-            quizAttempts: [],
-            revealedExercises: {},
-            completedChallenges: {},
-            completedDrills: {},
-            completedPredictions: {},
+        paths: {
+          ...prev.paths,
+          [pathId]: {
+            ...pathProg,
+            modules: {
+              ...pathProg.modules,
+              [moduleId]: {
+                moduleId,
+                completedLessonIds: [],
+                quizAttempts: [],
+                revealedExercises: {},
+                completedChallenges: {},
+                completedDrills: {},
+                completedPredictions: {},
+              },
+            },
+          },
+        },
+      };
+    },
+    []
+  );
+
+  /** Helper: update a module within a path */
+  const updateModule = useCallback(
+    (prev: AppProgress, pathId: string, moduleId: string, updater: (mp: AppProgress['paths'][string]['modules'][string]) => AppProgress['paths'][string]['modules'][string]): AppProgress => {
+      const pp = prev.paths[pathId] ?? emptyPathProgress();
+      const mp = pp.modules[moduleId];
+      if (!mp) return prev;
+      return {
+        ...prev,
+        paths: {
+          ...prev.paths,
+          [pathId]: {
+            ...pp,
+            modules: {
+              ...pp.modules,
+              [moduleId]: updater(mp),
+            },
           },
         },
       };
@@ -146,229 +209,181 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   );
 
   const markLessonComplete = useCallback(
-    (moduleId: string, lessonId: string) => {
+    (pathId: string, moduleId: string, lessonId: string) => {
       setProgress((prev) => {
-        const next = ensureModule(prev, moduleId);
-        const mp = next.modules[moduleId];
+        const next = ensureModule(prev, pathId, moduleId);
+        const mp = next.paths[pathId].modules[moduleId];
         if (mp.completedLessonIds.includes(lessonId)) return prev;
-        return {
-          ...next,
-          modules: {
-            ...next.modules,
-            [moduleId]: {
-              ...mp,
-              completedLessonIds: [...mp.completedLessonIds, lessonId],
-            },
-          },
-        };
+        return updateModule(next, pathId, moduleId, (m) => ({
+          ...m,
+          completedLessonIds: [...m.completedLessonIds, lessonId],
+        }));
       });
     },
-    [ensureModule]
+    [ensureModule, updateModule]
   );
 
   const saveQuizAttempt = useCallback(
-    (moduleId: string, attempt: QuizAttempt) => {
+    (pathId: string, moduleId: string, attempt: QuizAttempt) => {
       setProgress((prev) => {
-        const next = ensureModule(prev, moduleId);
-        const mp = next.modules[moduleId];
-        return {
-          ...next,
-          modules: {
-            ...next.modules,
-            [moduleId]: {
-              ...mp,
-              quizAttempts: [...mp.quizAttempts, attempt],
-            },
-          },
-        };
+        const next = ensureModule(prev, pathId, moduleId);
+        return updateModule(next, pathId, moduleId, (m) => ({
+          ...m,
+          quizAttempts: [...m.quizAttempts, attempt],
+        }));
       });
     },
-    [ensureModule]
+    [ensureModule, updateModule]
   );
 
   const setLastVisited = useCallback(
-    (path: string, moduleId?: string, lessonId?: string) => {
+    (path: string, pathId?: string, moduleId?: string, lessonId?: string) => {
       setProgress((prev) => {
         let next: AppProgress = { ...prev, lastVisitedPath: path };
-        if (moduleId) {
-          next = ensureModule(next, moduleId);
-          if (lessonId) {
-            next = {
-              ...next,
-              modules: {
-                ...next.modules,
-                [moduleId]: {
-                  ...next.modules[moduleId],
-                  lastVisitedLessonId: lessonId,
-                },
-              },
-            };
+        if (pathId) {
+          next = { ...next, activePath: pathId };
+          if (moduleId) {
+            next = ensureModule(next, pathId, moduleId);
+            if (lessonId) {
+              next = updateModule(next, pathId, moduleId, (m) => ({
+                ...m,
+                lastVisitedLessonId: lessonId,
+              }));
+            }
           }
         }
         return next;
       });
     },
-    [ensureModule]
+    [ensureModule, updateModule]
   );
 
   const isLessonComplete = useCallback(
-    (moduleId: string, lessonId: string) =>
-      progress.modules[moduleId]?.completedLessonIds.includes(lessonId) ?? false,
+    (pathId: string, moduleId: string, lessonId: string) =>
+      progress.paths[pathId]?.modules[moduleId]?.completedLessonIds.includes(lessonId) ?? false,
     [progress]
   );
 
   const revealExercise = useCallback(
-    (moduleId: string, lessonId: string, exerciseId: string) => {
+    (pathId: string, moduleId: string, lessonId: string, exerciseId: string) => {
       setProgress((prev) => {
-        const next = ensureModule(prev, moduleId);
-        const mp = next.modules[moduleId];
+        const next = ensureModule(prev, pathId, moduleId);
+        const mp = next.paths[pathId].modules[moduleId];
         const currentRevealed = mp.revealedExercises || {};
         const lessonRevealed = currentRevealed[lessonId] || [];
-
         if (lessonRevealed.includes(exerciseId)) return prev;
-
-        return {
-          ...next,
-          modules: {
-            ...next.modules,
-            [moduleId]: {
-              ...mp,
-              revealedExercises: {
-                ...currentRevealed,
-                [lessonId]: [...lessonRevealed, exerciseId],
-              },
-            },
+        return updateModule(next, pathId, moduleId, (m) => ({
+          ...m,
+          revealedExercises: {
+            ...(m.revealedExercises || {}),
+            [lessonId]: [...lessonRevealed, exerciseId],
           },
-        };
+        }));
       });
     },
-    [ensureModule]
+    [ensureModule, updateModule]
   );
 
   const completeChallenge = useCallback(
-    (moduleId: string, lessonId: string, challengeId: string) => {
+    (pathId: string, moduleId: string, lessonId: string, challengeId: string) => {
       setProgress((prev) => {
-        const next = ensureModule(prev, moduleId);
-        const mp = next.modules[moduleId];
+        const next = ensureModule(prev, pathId, moduleId);
+        const mp = next.paths[pathId].modules[moduleId];
         const current = mp.completedChallenges || {};
         const lessonChallenges = current[lessonId] || [];
         if (lessonChallenges.includes(challengeId)) return prev;
-        return {
-          ...next,
-          modules: {
-            ...next.modules,
-            [moduleId]: {
-              ...mp,
-              completedChallenges: {
-                ...current,
-                [lessonId]: [...lessonChallenges, challengeId],
-              },
-            },
+        return updateModule(next, pathId, moduleId, (m) => ({
+          ...m,
+          completedChallenges: {
+            ...(m.completedChallenges || {}),
+            [lessonId]: [...lessonChallenges, challengeId],
           },
-        };
+        }));
       });
     },
-    [ensureModule]
+    [ensureModule, updateModule]
   );
 
   const isChallengeComplete = useCallback(
-    (moduleId: string, lessonId: string, challengeId: string) =>
-      progress.modules[moduleId]?.completedChallenges?.[lessonId]?.includes(challengeId) ?? false,
+    (pathId: string, moduleId: string, lessonId: string, challengeId: string) =>
+      progress.paths[pathId]?.modules[moduleId]?.completedChallenges?.[lessonId]?.includes(challengeId) ?? false,
     [progress]
   );
 
   const completeDrill = useCallback(
-    (moduleId: string, lessonId: string, drillId: string) => {
+    (pathId: string, moduleId: string, lessonId: string, drillId: string) => {
       setProgress((prev) => {
-        const next = ensureModule(prev, moduleId);
-        const mp = next.modules[moduleId];
+        const next = ensureModule(prev, pathId, moduleId);
+        const mp = next.paths[pathId].modules[moduleId];
         const current = mp.completedDrills || {};
         const lessonDrills = current[lessonId] || [];
         if (lessonDrills.includes(drillId)) return prev;
-        return {
-          ...next,
-          modules: {
-            ...next.modules,
-            [moduleId]: {
-              ...mp,
-              completedDrills: {
-                ...current,
-                [lessonId]: [...lessonDrills, drillId],
-              },
-            },
+        return updateModule(next, pathId, moduleId, (m) => ({
+          ...m,
+          completedDrills: {
+            ...(m.completedDrills || {}),
+            [lessonId]: [...lessonDrills, drillId],
           },
-        };
+        }));
       });
     },
-    [ensureModule]
+    [ensureModule, updateModule]
   );
 
   const isDrillComplete = useCallback(
-    (moduleId: string, lessonId: string, drillId: string) =>
-      progress.modules[moduleId]?.completedDrills?.[lessonId]?.includes(drillId) ?? false,
+    (pathId: string, moduleId: string, lessonId: string, drillId: string) =>
+      progress.paths[pathId]?.modules[moduleId]?.completedDrills?.[lessonId]?.includes(drillId) ?? false,
     [progress]
   );
 
   const completePrediction = useCallback(
-    (moduleId: string, lessonId: string, predictionId: string) => {
+    (pathId: string, moduleId: string, lessonId: string, predictionId: string) => {
       setProgress((prev) => {
-        const next = ensureModule(prev, moduleId);
-        const mp = next.modules[moduleId];
+        const next = ensureModule(prev, pathId, moduleId);
+        const mp = next.paths[pathId].modules[moduleId];
         const current = mp.completedPredictions || {};
         const lessonPredictions = current[lessonId] || [];
         if (lessonPredictions.includes(predictionId)) return prev;
-        return {
-          ...next,
-          modules: {
-            ...next.modules,
-            [moduleId]: {
-              ...mp,
-              completedPredictions: {
-                ...current,
-                [lessonId]: [...lessonPredictions, predictionId],
-              },
-            },
+        return updateModule(next, pathId, moduleId, (m) => ({
+          ...m,
+          completedPredictions: {
+            ...(m.completedPredictions || {}),
+            [lessonId]: [...lessonPredictions, predictionId],
           },
-        };
+        }));
       });
     },
-    [ensureModule]
+    [ensureModule, updateModule]
   );
 
   const isPredictionComplete = useCallback(
-    (moduleId: string, lessonId: string, predictionId: string) =>
-      progress.modules[moduleId]?.completedPredictions?.[lessonId]?.includes(predictionId) ?? false,
+    (pathId: string, moduleId: string, lessonId: string, predictionId: string) =>
+      progress.paths[pathId]?.modules[moduleId]?.completedPredictions?.[lessonId]?.includes(predictionId) ?? false,
     [progress]
   );
 
   const completeProjectStep = useCallback(
-    (moduleId: string, stepId: string) => {
+    (pathId: string, moduleId: string, stepId: string) => {
       setProgress((prev) => {
-        const next = ensureModule(prev, moduleId);
-        const mp = next.modules[moduleId];
+        const next = ensureModule(prev, pathId, moduleId);
+        const mp = next.paths[pathId].modules[moduleId];
         const pp = mp.projectProgress || { completedStepIds: [] };
         if (pp.completedStepIds.includes(stepId)) return prev;
-        return {
-          ...next,
-          modules: {
-            ...next.modules,
-            [moduleId]: {
-              ...mp,
-              projectProgress: {
-                completedStepIds: [...pp.completedStepIds, stepId],
-                lastStepId: stepId,
-              },
-            },
+        return updateModule(next, pathId, moduleId, (m) => ({
+          ...m,
+          projectProgress: {
+            completedStepIds: [...pp.completedStepIds, stepId],
+            lastStepId: stepId,
           },
-        };
+        }));
       });
     },
-    [ensureModule]
+    [ensureModule, updateModule]
   );
 
   const isProjectStepComplete = useCallback(
-    (moduleId: string, stepId: string) =>
-      progress.modules[moduleId]?.projectProgress?.completedStepIds.includes(stepId) ?? false,
+    (pathId: string, moduleId: string, stepId: string) =>
+      progress.paths[pathId]?.modules[moduleId]?.projectProgress?.completedStepIds.includes(stepId) ?? false,
     [progress]
   );
 
