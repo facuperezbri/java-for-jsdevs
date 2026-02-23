@@ -1,8 +1,23 @@
 {
+  "pathSelection": {
+    "title": "Learning for Devs",
+    "subtitle": "Elige una ruta de aprendizaje. Cada concepto se muestra lado a lado con comparaciones para que aprendas más rápido.",
+    "footer": "Lecciones interactivas · Bilingüe (EN/ES) · Gratis y de código abierto"
+  },
+  "landing": {
+    "heroTitle": "Aprende comparando.",
+    "heroSubtitle": "Elige una ruta de aprendizaje. Cada concepto se muestra lado a lado con lo que ya sabes.",
+    "featureSideBySideTitle": "Código lado a lado",
+    "featureSideBySideDesc": "Cada concepto mostrado en dos lenguajes, para que aprendas comparando lo que ya conoces.",
+    "featureExercisesTitle": "Ejercicios interactivos",
+    "featureExercisesDesc": "Ejercicios de traducción, predicción de salida y desafíos de código refuerzan cada lección.",
+    "featureProgressTitle": "Seguimiento de progreso",
+    "featureProgressDesc": "Tu progreso se sincroniza entre dispositivos. Continúa justo donde lo dejaste."
+  },
   "roadmap": {
     "learningPath": "Ruta de Aprendizaje",
-    "title": "Java para Desarrolladores JavaScript",
-    "description": "Domina Java comparándolo con lo que ya sabes. Cada concepto se muestra lado a lado con su equivalente en JavaScript.",
+    "title": "Ruta de Aprendizaje",
+    "description": "Domina nuevas habilidades con lecciones interactivas y comparaciones.",
     "startJourney": "Comienza tu viaje",
     "lessonsComplete": "{{completed}} de {{total}} lecciones completadas",
     "startLearning": "Comenzar a aprender",
@@ -10,7 +25,9 @@
   },
   "home": {
     "courseModules": "Módulos del Curso",
-    "stats": "4 módulos · 22 lecciones · 4 cuestionarios · Creado para desarrolladores React/JS"
+    "modules": "módulos",
+    "lessons": "lecciones",
+    "stats": "Rutas de aprendizaje interactivas para desarrolladores"
   },
   "common": {
     "check": "Verificar",
@@ -25,7 +42,7 @@
   },
   "drill": {
     "title": "Ejercicio de Traducción",
-    "subtitle": "Traduce el código JavaScript a Java arrastrando tokens a los espacios correctos.",
+    "subtitle": "Traduce el código fuente al destino arrastrando tokens a los espacios correctos.",
     "tokenBank": "Banco de Tokens — arrastra o haz clic para colocar:",
     "incorrect": "Algunos espacios son incorrectos. Haz clic en los tokens incorrectos para devolverlos e intenta de nuevo."
   },
@@ -44,7 +61,7 @@
     "of": "de",
     "correct": "correctas",
     "unlocked": "¡desbloqueado!",
-    "courseComplete": "¡Curso completado!",
+    "courseComplete": "¡Ruta completada!",
     "needScore": "Necesitas ≥60% para aprobar — obtuviste {{score}}%. ¡Intenta de nuevo!",
     "review": "Revisión",
     "yourAnswer": "Tu respuesta:",
@@ -112,19 +129,23 @@
   },
   "codeLabels": {
     "javascript": "JavaScript",
-    "java": "Java"
+    "java": "Java",
+    "react": "React",
+    "classComponent": "Componente de Clase",
+    "hooks": "Hooks"
   },
   "sidebar": {
-    "appName": "Java para Devs JS",
+    "appName": "Learning for Devs",
     "interactiveCourse": "Curso Interactivo",
     "overallProgress": "Progreso General",
     "lessons": "lecciones",
     "miniProject": "Mini Proyecto",
     "moduleQuiz": "Cuestionario del Módulo",
-    "backToRoadmap": "← Volver a la Ruta"
+    "backToRoadmap": "← Volver a la Ruta",
+    "switchPath": "← Todas las rutas"
   },
   "topBar": {
-    "appName": "Java para Devs JS"
+    "appName": "Learning for Devs"
   },
   "aria": {
     "openMenu": "Abrir menú",
@@ -134,10 +155,10 @@
   },
   "chat": {
     "title": "Chat",
-    "subtitle": "Pregunta sobre Java",
+    "subtitle": "Pregunta sobre programación",
     "ariaOpenChat": "Abrir chat",
     "ariaCloseChat": "Cerrar chat",
-    "emptyState": "Pregúntame lo que quieras sobre Java",
+    "emptyState": "Pregúntame lo que quieras sobre programación",
     "emptyExample": "ej. ¿Cuál es la diferencia entre == y equals()?",
     "thinking": "Pensando...",
     "placeholder": "Escribe tu pregunta...",

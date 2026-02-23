@@ -1,8 +1,23 @@
 {
+  "pathSelection": {
+    "title": "Learning for Devs",
+    "subtitle": "Choose a learning path. Every concept is shown side-by-side with comparisons to help you learn faster.",
+    "footer": "Interactive lessons · Bilingual (EN/ES) · Free and open source"
+  },
+  "landing": {
+    "heroTitle": "Learn by comparison.",
+    "heroSubtitle": "Choose a learning path. Every concept is shown side-by-side with what you already know.",
+    "featureSideBySideTitle": "Side-by-side code",
+    "featureSideBySideDesc": "Every concept shown in two languages, so you learn by comparing what you already know.",
+    "featureExercisesTitle": "Interactive exercises",
+    "featureExercisesDesc": "Translation drills, output prediction, and code challenges reinforce each lesson.",
+    "featureProgressTitle": "Track progress",
+    "featureProgressDesc": "Your progress syncs across devices. Pick up right where you left off."
+  },
   "roadmap": {
     "learningPath": "Learning Path",
-    "title": "Java for JavaScript Developers",
-    "description": "Master Java by comparing it to what you already know. Every concept is shown side-by-side with its JavaScript equivalent.",
+    "title": "Learning Path",
+    "description": "Master new skills through interactive lessons and comparisons.",
     "startJourney": "Start your journey",
     "lessonsComplete": "{{completed}} of {{total}} lessons complete",
     "startLearning": "Start learning",
@@ -10,7 +25,9 @@
   },
   "home": {
     "courseModules": "Course Modules",
-    "stats": "4 modules · 22 lessons · 4 quizzes · Built for React/JS developers"
+    "modules": "modules",
+    "lessons": "lessons",
+    "stats": "Interactive learning paths for developers"
   },
   "common": {
     "check": "Check",
@@ -25,7 +42,7 @@
   },
   "drill": {
     "title": "Translation Drill",
-    "subtitle": "Translate the JavaScript code to Java by dragging tokens into the correct slots.",
+    "subtitle": "Translate the source code to the target by dragging tokens into the correct slots.",
     "tokenBank": "Token Bank — drag or click to place:",
     "incorrect": "Some slots are incorrect. Click wrong tokens to return them and try again."
   },
@@ -44,7 +61,7 @@
     "of": "of",
     "correct": "correct",
     "unlocked": "unlocked!",
-    "courseComplete": "Course complete!",
+    "courseComplete": "Path complete!",
     "needScore": "Need ≥60% to pass — you got {{score}}%. Try again!",
     "review": "Review",
     "yourAnswer": "Your answer:",
@@ -112,19 +129,23 @@
   },
   "codeLabels": {
     "javascript": "JavaScript",
-    "java": "Java"
+    "java": "Java",
+    "react": "React",
+    "classComponent": "Class Component",
+    "hooks": "Hooks"
   },
   "sidebar": {
-    "appName": "Java for JS Devs",
+    "appName": "Learning for Devs",
     "interactiveCourse": "Interactive Course",
     "overallProgress": "Overall Progress",
     "lessons": "lessons",
     "miniProject": "Mini Project",
     "moduleQuiz": "Module Quiz",
-    "backToRoadmap": "← Back to Roadmap"
+    "backToRoadmap": "← Back to Roadmap",
+    "switchPath": "← All paths"
   },
   "topBar": {
-    "appName": "Java for JS Devs"
+    "appName": "Learning for Devs"
   },
   "aria": {
     "openMenu": "Open menu",
@@ -134,10 +155,10 @@
   },
   "chat": {
     "title": "Chat",
-    "subtitle": "Ask about Java",
+    "subtitle": "Ask about programming",
     "ariaOpenChat": "Open chat",
     "ariaCloseChat": "Close chat",
-    "emptyState": "Ask me anything about Java",
+    "emptyState": "Ask me anything about programming",
     "emptyExample": "e.g. What's the difference between == and equals()?",
     "thinking": "Thinking...",
     "placeholder": "Type your question...",
