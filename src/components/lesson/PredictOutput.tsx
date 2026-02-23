@@ -55,8 +55,8 @@ export function PredictOutputExercise({ exercise, index, isComplete, onComplete 
       className={cn(
         'rounded-xl border p-5 space-y-4 transition-all animate-fade-in',
         done
-          ? 'bg-module-green/5 border-module-green/20 shadow-editorial'
-          : 'bg-surface-1 border-border-subtle shadow-editorial'
+          ? 'bg-module-green/5 border-module-green/20'
+          : 'bg-surface-1 border-border-subtle'
       )}
     >
       <div className="flex gap-3">

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { drawerSpring } from '../../lib/motion';
+import { useSidebar } from '../../context/SidebarContext';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { isCollapsed } = useSidebar();
   const pathname = usePathname();
 
   // Close sidebar on route change (mobile)
@@ -22,7 +24,7 @@ export function AppShell({ children }: AppShellProps) {
   }, [pathname]);
 
   return (
-    <div className="grain min-h-screen bg-page-bg text-text-primary">
+    <div className="min-h-screen bg-page-bg text-text-primary">
       {/* Mobile top bar */}
       <TopBar onMenuClick={() => setSidebarOpen(true)} />
 
@@ -55,7 +57,10 @@ export function AppShell({ children }: AppShellProps) {
       {/* Desktop layout */}
       <div className="md:flex md:h-screen md:overflow-hidden">
         {/* Desktop sidebar - always visible */}
-        <div className="hidden md:flex md:flex-shrink-0">
+        <div
+          className="hidden md:flex md:flex-shrink-0 transition-all duration-200"
+          style={{ width: isCollapsed ? 64 : 280 }}
+        >
           <Sidebar />
         </div>
 

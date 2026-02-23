@@ -15,10 +15,10 @@ interface ConceptBlockProps {
 }
 
 const calloutConfig = {
-  info: { icon: Info, border: 'border-l-module-blue', bg: 'bg-module-blue/5', text: 'text-text-secondary', iconColor: 'text-module-blue' },
-  warning: { icon: AlertTriangle, border: 'border-l-amber-500', bg: 'bg-amber-500/5', text: 'text-text-secondary', iconColor: 'text-amber-500' },
-  tip: { icon: Lightbulb, border: 'border-l-module-green', bg: 'bg-module-green/5', text: 'text-text-secondary', iconColor: 'text-module-green' },
-  gotcha: { icon: Zap, border: 'border-l-java', bg: 'bg-java/5', text: 'text-text-secondary', iconColor: 'text-java' },
+  info: { icon: Info, border: 'border-l-module-blue', bg: 'bg-module-blue/[0.04]', text: 'text-text-secondary', iconColor: 'text-module-blue' },
+  warning: { icon: AlertTriangle, border: 'border-l-amber-500', bg: 'bg-amber-500/[0.04]', text: 'text-text-secondary', iconColor: 'text-amber-500' },
+  tip: { icon: Lightbulb, border: 'border-l-module-green', bg: 'bg-module-green/[0.04]', text: 'text-text-secondary', iconColor: 'text-module-green' },
+  gotcha: { icon: Zap, border: 'border-l-java', bg: 'bg-java/[0.04]', text: 'text-text-secondary', iconColor: 'text-java' },
 };
 
 export function ConceptBlock({ concept, isChallengeComplete, onChallengeComplete }: ConceptBlockProps) {
@@ -35,11 +35,11 @@ export function ConceptBlock({ concept, isChallengeComplete, onChallengeComplete
     >
       <div>
         <h3 className="font-display text-display-sm text-text-primary mb-2">{concept.title}</h3>
-        <p className="text-text-secondary leading-reading">{concept.explanation}</p>
+        <p className="text-text-secondary leading-reading text-[16.5px]">{concept.explanation}</p>
       </div>
 
       {concept.analogy && (
-        <div className="flex gap-3 p-3 border-l-2 border-java/30 bg-surface-2/50 rounded-r-lg">
+        <div className="flex gap-3 p-3 border-l-2 border-l-accent/30 bg-accent-light/50 rounded-r-lg">
           <span className="text-xl flex-shrink-0">💡</span>
           <p className="text-sm text-text-secondary italic">{concept.analogy}</p>
         </div>

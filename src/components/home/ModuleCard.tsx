@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import type { Module } from '../../types';
 import { useProgress } from '../../context/ProgressContext';
 import { isModuleUnlocked, getModuleProgress, getBestQuizScore, getModuleAccentClasses } from '../../lib/utils';
-import { useCurriculum } from '../../data/curriculum';
+import { usePathCurriculum } from '../../data/curriculum';
 import { ProgressBar } from '../ui/ProgressBar';
 import { Badge } from '../ui/Badge';
 import { cn } from '../../lib/utils';
@@ -16,15 +16,16 @@ import { staggerItem } from '../../lib/motion';
 
 interface ModuleCardProps {
   module: Module;
+  pathId: string;
 }
 
-export function ModuleCard({ module }: ModuleCardProps) {
+export function ModuleCard({ module, pathId }: ModuleCardProps) {
   const { progress } = useProgress();
   const { t } = useTranslation();
-  const { CURRICULUM } = useCurriculum();
-  const unlocked = isModuleUnlocked(module.order, CURRICULUM, progress);
-  const { completed, total, percent } = getModuleProgress(module, progress);
-  const bestScore = getBestQuizScore(module.id, progress);
+  const { CURRICULUM } = usePathCurriculum(pathId);
+  const unlocked = isModuleUnlocked(module.order, CURRICULUM, progress, pathId);
+  const { completed, total, percent } = getModuleProgress(module, progress, pathId);
+  const bestScore = getBestQuizScore(module.id, progress, pathId);
   const accent = getModuleAccentClasses(module.accentColor);
 
   const [lockedShake, setLockedShake] = useState(false);
@@ -43,23 +44,16 @@ export function ModuleCard({ module }: ModuleCardProps) {
       variants={staggerItem}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      whileHover={unlocked ? { y: -2 } : undefined}
       animate={lockedShake ? { x: [0, -4, 4, -4, 4, 0] } : {}}
       transition={lockedShake ? { duration: 0.4 } : { duration: 0.2 }}
       onClick={!unlocked ? handleLockedClick : undefined}
       className={cn(
         'relative rounded-xl border p-6 transition-all duration-200 overflow-hidden',
         unlocked
-          ? 'bg-surface-1 border-border-subtle hover:shadow-editorial cursor-pointer'
+          ? 'bg-surface-1 border-border-subtle hover:border-border hover:shadow-soft cursor-pointer'
           : 'bg-surface-2 border-border-subtle cursor-not-allowed opacity-60',
-        unlocked && !isFullyComplete && 'grayscale-0',
       )}
     >
-      {/* Gradient accent strip at top */}
-      {unlocked && (
-        <div className={cn('absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r', accent.gradient)} />
-      )}
-
       {/* Top row */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -67,8 +61,13 @@ export function ModuleCard({ module }: ModuleCardProps) {
             {module.icon}
           </div>
           <div>
-            <div className="text-xs text-text-tertiary font-medium uppercase tracking-wider mb-0.5">
-              {t('moduleCard.module', 'Module')} {module.order}
+            <div className="flex items-center gap-2 mb-0.5">
+              <span className="text-xs text-text-tertiary font-medium uppercase tracking-wider">
+                {t('moduleCard.module', 'Module')} {module.order}
+              </span>
+              {unlocked && (
+                <span className={cn('w-1.5 h-1.5 rounded-full', accent.bg)} />
+              )}
             </div>
             <h3 className="text-text-primary font-semibold text-base leading-tight">{module.title}</h3>
           </div>
@@ -125,7 +124,7 @@ export function ModuleCard({ module }: ModuleCardProps) {
   if (!unlocked) return cardContent;
 
   return (
-    <Link href={`/module/${module.id}`}>
+    <Link href={`/path/${pathId}/module/${module.id}`}>
       {cardContent}
     </Link>
   );

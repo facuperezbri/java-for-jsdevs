@@ -24,10 +24,10 @@ export function TopBar({ onMenuClick }: TopBarProps) {
           <Menu size={20} />
         </button>
         <div className="flex items-center gap-2 ml-3">
-          <div className="p-1 bg-java/10 rounded-lg">
-            <BookOpen size={16} className="text-java" />
+          <div className="p-1 bg-accent/10 rounded-lg">
+            <BookOpen size={16} className="text-accent" />
           </div>
-          <span className="font-display font-semibold text-text-primary text-sm">{t('topBar.appName', 'Java for JS Devs')}</span>
+          <span className="font-display font-semibold text-text-primary text-sm">{t('topBar.appName', 'Learning for Devs')}</span>
         </div>
       </div>
       <div className="flex items-center gap-1">

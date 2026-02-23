@@ -1,8 +1,8 @@
 // ─── Content Types ────────────────────────────────────────────────────────────
 
 export interface CodeExample {
-  javascript: string;
-  java: string;
+  left: { label: string; language: string; code: string };
+  right: { label: string; language: string; code: string };
   caption?: string;
 }
 
@@ -22,7 +22,7 @@ export interface CodeChallenge {
   explanation: string;
 }
 
-// JS→Java drag-and-drop drills
+// Drag-and-drop translation drills (generic source→target)
 export interface TranslationDrillSlot {
   id: string;
   expected: string;
@@ -30,8 +30,10 @@ export interface TranslationDrillSlot {
 
 export interface TranslationDrill {
   id: string;
-  jsCode: string;
-  javaTemplate: string; // Java code with ___SLOT_1___ placeholders
+  sourceLabel: string;
+  sourceCode: string;
+  targetLabel: string;
+  targetTemplate: string; // code with ___SLOT_1___ placeholders
   slots: TranslationDrillSlot[];
   tokenBank: string[];
   explanation: string;
@@ -41,7 +43,7 @@ export interface TranslationDrill {
 export interface PredictOutput {
   id: string;
   code: string;
-  language: 'java';
+  language: string;
   expectedOutput: string;
   explanation: string;
   hint?: string;
@@ -104,10 +106,24 @@ export interface Module {
   title: string;
   subtitle: string;
   icon: string;
-  accentColor: 'blue' | 'purple' | 'green' | 'red';
+  accentColor: 'blue' | 'purple' | 'green' | 'red' | 'cyan';
   lessons: Lesson[];
   quizId: string;
   project?: MiniProject;
+}
+
+// ─── Path Types ──────────────────────────────────────────────────────────────
+
+export interface LearningPath {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  icon: string;
+  accentColor: string;
+  audienceTag: string;
+  moduleCount: number;
+  lessonCount: number;
 }
 
 // ─── Quiz Types ───────────────────────────────────────────────────────────────
@@ -153,7 +169,13 @@ export interface ModuleProgress {
   projectProgress?: { completedStepIds: string[]; lastStepId?: string };
 }
 
-export interface AppProgress {
+export interface PathProgress {
   modules: Record<string, ModuleProgress>;
+  lastVisitedLessonPath?: string;
+}
+
+export interface AppProgress {
+  paths: Record<string, PathProgress>;
+  activePath?: string;
   lastVisitedPath?: string;
 }

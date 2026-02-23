@@ -1,21 +1,22 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import { getDb } from '@/db';
-import { users, userProgress } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import type { AppProgress } from '@/src/types';
+import { getDb } from "@/db";
+import { userProgress, users } from "@/db/schema";
+import { migrateProgress } from "@/src/lib/progress-migration";
+import type { AppProgress } from "@/src/types";
+import { auth } from "@clerk/nextjs/server";
+import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     if (!process.env.DATABASE_URL) {
       return NextResponse.json(
-        { error: 'Database not configured' },
+        { error: "Database not configured" },
         { status: 503 }
       );
     }
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const db = getDb();
@@ -25,19 +26,14 @@ export async function GET() {
       .where(eq(userProgress.clerkUserId, userId))
       .limit(1);
 
-    const raw = row[0]?.progress;
-    const progress: AppProgress = raw
-      ? {
-          modules: (raw as AppProgress).modules ?? {},
-          lastVisitedPath: (raw as AppProgress).lastVisitedPath,
-        }
-      : { modules: {} };
+    const raw = row[0]?.progress as Record<string, unknown> | undefined;
+    const progress: AppProgress = raw ? migrateProgress(raw) : { paths: {} };
 
     return NextResponse.json(progress);
   } catch (err) {
-    console.error('GET /api/progress:', err);
+    console.error("GET /api/progress:", err);
     return NextResponse.json(
-      { error: 'Failed to fetch progress' },
+      { error: "Failed to fetch progress" },
       { status: 500 }
     );
   }
@@ -47,13 +43,13 @@ export async function POST(req: Request) {
   try {
     if (!process.env.DATABASE_URL) {
       return NextResponse.json(
-        { error: 'Database not configured' },
+        { error: "Database not configured" },
         { status: 503 }
       );
     }
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = (await req.json()) as AppProgress;
@@ -84,9 +80,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error('POST /api/progress:', err);
+    console.error("POST /api/progress:", err);
     return NextResponse.json(
-      { error: 'Failed to save progress' },
+      { error: "Failed to save progress" },
       { status: 500 }
     );
   }

@@ -1,7 +1,6 @@
 import { Clock, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Lesson, Module } from '../../types';
-import { Badge } from '../ui/Badge';
 
 interface LessonHeaderProps {
   lesson: Lesson;
@@ -16,11 +15,10 @@ export function LessonHeader({ lesson, module, isComplete, lessonIndex, totalLes
 
   return (
     <div className="mb-8">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">{module.icon}</span>
-        <Badge variant={module.accentColor}>{module.title}</Badge>
-        <span className="text-text-muted">·</span>
-        <span className="text-sm text-text-tertiary">
+      <div className="flex items-center gap-2 mb-3 text-sm text-text-tertiary">
+        <span>{module.title}</span>
+        <span className="text-text-muted">/</span>
+        <span>
           {t('lessonHeader.lessonCount', 'Lesson {{current}} of {{total}}', { current: lessonIndex + 1, total: totalLessons })}
         </span>
       </div>

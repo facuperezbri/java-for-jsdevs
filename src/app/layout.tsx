@@ -1,35 +1,29 @@
 import type { Metadata } from 'next';
-import { Fraunces, DM_Sans, JetBrains_Mono } from 'next/font/google';
+import { Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
+import { GeistMono } from 'geist/font/mono';
 import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 import { Providers } from './providers';
 import { I18nProvider } from './I18nProvider';
 import { ChatWidget } from '@/src/components/chat/ChatWidget';
 
-const fraunces = Fraunces({
+const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
-  variable: '--font-fraunces',
-  axes: ['opsz'],
+  variable: '--font-display',
+  weight: '400',
   display: 'swap',
 });
 
-const dmSans = DM_Sans({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-dm-sans',
+  variable: '--font-sans',
   weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains',
-  weight: ['400', '500'],
-  display: 'swap',
-});
-
 export const metadata: Metadata = {
-  title: 'Java for JS Devs',
-  description: 'Interactive course for JavaScript developers learning Java',
+  title: 'Learning for Devs',
+  description: 'Interactive learning paths for developers — Java, React, and more',
 };
 
 export default function RootLayout({
@@ -43,7 +37,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${fraunces.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}
+      className={`${instrumentSerif.variable} ${plusJakarta.variable} ${GeistMono.variable}`}
     >
       <body className="font-sans">
         {publishableKey ? (

@@ -227,10 +227,10 @@ export function CustomAuthPage() {
     <motion.div variants={staggerContainer} initial="hidden" animate="visible">
       {/* Header */}
       <motion.div variants={staggerItem} className="flex items-center gap-2 mb-8">
-        <div className="p-1.5 bg-java/10 rounded-lg">
-          <BookOpen size={22} className="text-java" />
+        <div className="p-1.5 bg-accent/10 rounded-lg">
+          <BookOpen size={22} className="text-accent" />
         </div>
-        <h1 className="font-display text-xl font-bold text-text-primary">Java for JS Devs</h1>
+        <h1 className="font-display text-xl font-bold text-text-primary">Learning for Devs</h1>
       </motion.div>
 
       {/* Tabs with sliding indicator */}
@@ -238,14 +238,14 @@ export function CustomAuthPage() {
         {mode === 'sign-in' && (
           <motion.div
             layoutId="auth-tab-indicator"
-            className="absolute inset-y-1 left-1 right-1/2 rounded-md bg-java shadow-sm"
+            className="absolute inset-y-1 left-1 right-1/2 rounded-md bg-accent shadow-sm"
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           />
         )}
         {mode === 'sign-up' && (
           <motion.div
             layoutId="auth-tab-indicator"
-            className="absolute inset-y-1 left-1/2 right-1 rounded-md bg-java shadow-sm"
+            className="absolute inset-y-1 left-1/2 right-1 rounded-md bg-accent shadow-sm"
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           />
         )}

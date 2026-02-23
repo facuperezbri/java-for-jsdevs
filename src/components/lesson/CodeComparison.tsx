@@ -13,71 +13,74 @@ interface CodeComparisonProps {
 
 export function CodeComparison({ example }: CodeComparisonProps) {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'js' | 'java'>('js');
+  const [activeTab, setActiveTab] = useState<'left' | 'right'>('left');
+
+  const leftLabel = example.left.label;
+  const rightLabel = example.right.label;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 lg:-mx-8">
       {/* Mobile tab switcher (below lg) */}
       <div className="flex lg:hidden gap-1 p-1 rounded-lg bg-surface-2 border border-border-subtle">
         <button
-          onClick={() => setActiveTab('js')}
+          onClick={() => setActiveTab('left')}
           className={cn(
             'flex-1 flex items-center justify-center gap-2 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors',
-            activeTab === 'js'
-              ? 'bg-js-muted text-js-dark border border-js/20'
+            activeTab === 'left'
+              ? 'bg-surface-1 text-text-primary'
               : 'text-text-tertiary hover:text-text-secondary'
           )}
         >
           <span className="w-2 h-2 rounded-full bg-js" />
-          {t('codeLabels.javascript', 'JavaScript')}
+          {leftLabel}
         </button>
         <button
-          onClick={() => setActiveTab('java')}
+          onClick={() => setActiveTab('right')}
           className={cn(
             'flex-1 flex items-center justify-center gap-2 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors',
-            activeTab === 'java'
-              ? 'bg-java-glow text-java border border-java/20'
+            activeTab === 'right'
+              ? 'bg-surface-1 text-text-primary'
               : 'text-text-tertiary hover:text-text-secondary'
           )}
         >
           <span className="w-2 h-2 rounded-full bg-java" />
-          {t('codeLabels.java', 'Java')}
+          {rightLabel}
         </button>
       </div>
 
       {/* Mobile: tabbed view */}
       <div className="lg:hidden">
         <AnimatePresence mode="wait">
-          {activeTab === 'js' ? (
+          {activeTab === 'left' ? (
             <motion.div
-              key="js-mobile"
+              key="left-mobile"
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.2 }}
             >
               <div className="rounded-xl border border-border-subtle overflow-hidden">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-js-muted border-b border-js/20">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-2 border-b border-border-subtle">
                   <span className="w-2 h-2 rounded-full bg-js" />
-                  <span className="text-xs font-semibold text-js-dark uppercase tracking-wider">{t('codeLabels.javascript', 'JavaScript')}</span>
+                  <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">{leftLabel}</span>
                 </div>
-                <CodeBlock code={example.javascript} language="javascript" />
+                <CodeBlock code={example.left.code} language={example.left.language} />
               </div>
             </motion.div>
           ) : (
             <motion.div
-              key="java-mobile"
+              key="right-mobile"
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
             >
               <div className="rounded-xl border border-border-subtle overflow-hidden">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-java-glow border-b border-java/20">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-2 border-b border-border-subtle">
                   <span className="w-2 h-2 rounded-full bg-java" />
-                  <span className="text-xs font-semibold text-java uppercase tracking-wider">{t('codeLabels.java', 'Java')}</span>
+                  <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">{rightLabel}</span>
                 </div>
-                <CodeBlock code={example.java} language="java" />
+                <CodeBlock code={example.right.code} language={example.right.language} />
               </div>
             </motion.div>
           )}
@@ -86,25 +89,25 @@ export function CodeComparison({ example }: CodeComparisonProps) {
 
       {/* Desktop: side-by-side */}
       <div className="hidden lg:grid lg:grid-cols-2 gap-3">
-        {/* JavaScript side */}
+        {/* Left side */}
         <div className="flex flex-col min-w-0 rounded-xl border border-border-subtle overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-js-muted border-b border-js/20">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-2 border-b border-border-subtle">
             <span className="w-2 h-2 rounded-full bg-js" />
-            <span className="text-xs font-semibold text-js-dark uppercase tracking-wider">{t('codeLabels.javascript', 'JavaScript')}</span>
+            <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">{leftLabel}</span>
           </div>
           <div className="overflow-x-auto">
-            <CodeBlock code={example.javascript} language="javascript" />
+            <CodeBlock code={example.left.code} language={example.left.language} />
           </div>
         </div>
 
-        {/* Java side */}
+        {/* Right side */}
         <div className="flex flex-col min-w-0 rounded-xl border border-border-subtle overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-java-glow border-b border-java/20">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-2 border-b border-border-subtle">
             <span className="w-2 h-2 rounded-full bg-java" />
-            <span className="text-xs font-semibold text-java uppercase tracking-wider">{t('codeLabels.java', 'Java')}</span>
+            <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">{rightLabel}</span>
           </div>
           <div className="overflow-x-auto">
-            <CodeBlock code={example.java} language="java" />
+            <CodeBlock code={example.right.code} language={example.right.language} />
           </div>
         </div>
       </div>

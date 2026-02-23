@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import type { AppProgress, Module, MiniProject } from '../types';
+import type { AppProgress, Module, MiniProject, PathProgress } from '../types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -44,37 +44,56 @@ export function getModuleAccentClasses(color: Module['accentColor']) {
       ring: 'ring-module-red',
       gradient: 'from-module-red/80 to-module-red',
     },
+    cyan: {
+      bg: 'bg-module-cyan',
+      text: 'text-module-cyan',
+      border: 'border-module-cyan',
+      bgLight: 'bg-module-cyan/10',
+      ring: 'ring-module-cyan',
+      gradient: 'from-module-cyan/80 to-module-cyan',
+    },
   };
   return map[color];
+}
+
+/** Get the PathProgress for a given pathId, or an empty one */
+export function getPathProgress(progress: AppProgress, pathId: string): PathProgress {
+  return progress.paths[pathId] ?? { modules: {} };
 }
 
 export function isModuleUnlocked(
   order: number,
   allModules: Module[],
-  progress: AppProgress
+  progress: AppProgress,
+  pathId: string
 ): boolean {
   if (order === 1) return true;
   const prev = allModules.find((m) => m.order === order - 1);
   if (!prev) return false;
-  const attempts = progress.modules?.[prev.id]?.quizAttempts ?? [];
+  const pp = getPathProgress(progress, pathId);
+  const attempts = pp.modules[prev.id]?.quizAttempts ?? [];
   return attempts.length > 0 && Math.max(...attempts.map((a) => a.score)) >= 60;
 }
 
 export function getModuleProgress(
   module: Module,
-  progress: AppProgress
+  progress: AppProgress,
+  pathId: string
 ): { completed: number; total: number; percent: number } {
-  const mp = progress.modules?.[module.id];
-  const completed = mp?.completedLessonIds?.length ?? 0;
+  const pp = getPathProgress(progress, pathId);
+  const mp = pp.modules[module.id];
+  const completed = mp?.completedLessonIds.length ?? 0;
   const total = module.lessons.length;
   return { completed, total, percent: total > 0 ? (completed / total) * 100 : 0 };
 }
 
 export function getBestQuizScore(
   moduleId: string,
-  progress: AppProgress
+  progress: AppProgress,
+  pathId: string
 ): number | null {
-  const attempts = progress.modules?.[moduleId]?.quizAttempts ?? [];
+  const pp = getPathProgress(progress, pathId);
+  const attempts = pp.modules[moduleId]?.quizAttempts ?? [];
   if (attempts.length === 0) return null;
   return Math.max(...attempts.map((a) => a.score));
 }
@@ -90,10 +109,12 @@ export function checkPrediction(userAnswer: string, expected: string): boolean {
 export function getProjectProgress(
   moduleId: string,
   project: MiniProject,
-  progress: AppProgress
+  progress: AppProgress,
+  pathId: string
 ): { completed: number; total: number; percent: number } {
-  const pp = progress.modules?.[moduleId]?.projectProgress;
-  const completed = pp?.completedStepIds?.length ?? 0;
+  const pathProg = getPathProgress(progress, pathId);
+  const mp = pathProg.modules[moduleId]?.projectProgress;
+  const completed = mp?.completedStepIds.length ?? 0;
   const total = project.steps.length;
   return { completed, total, percent: total > 0 ? (completed / total) * 100 : 0 };
 }

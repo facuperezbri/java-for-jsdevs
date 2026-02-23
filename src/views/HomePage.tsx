@@ -4,23 +4,27 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { useProgress } from '../context/ProgressContext';
-import { useCurriculum } from '../data/curriculum';
+import { usePathCurriculum } from '../data/curriculum';
 import { ModuleCard } from '../components/home/ModuleCard';
 import { RoadmapHero } from '../components/home/RoadmapHero';
 import { staggerContainer, staggerItem } from '../lib/motion';
 
-export function HomePage() {
+interface HomePageProps {
+  pathId: string;
+}
+
+export function HomePage({ pathId }: HomePageProps) {
   const { setLastVisited } = useProgress();
   const { t } = useTranslation();
-  const { CURRICULUM } = useCurriculum();
+  const { CURRICULUM, path } = usePathCurriculum(pathId);
 
   useEffect(() => {
-    setLastVisited('/');
-  }, [setLastVisited]);
+    setLastVisited(`/path/${pathId}`, pathId);
+  }, [setLastVisited, pathId]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <RoadmapHero />
+      <RoadmapHero pathId={pathId} />
 
       <motion.div
         variants={staggerContainer}
@@ -32,7 +36,7 @@ export function HomePage() {
         </motion.h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {CURRICULUM.map((module) => (
-            <ModuleCard key={module.id} module={module} />
+            <ModuleCard key={module.id} module={module} pathId={pathId} />
           ))}
         </div>
       </motion.div>
@@ -44,7 +48,9 @@ export function HomePage() {
         className="mt-12 text-center"
       >
         <p className="text-sm text-text-tertiary">
-          {t('home.stats', '4 modules · 22 lessons · 4 quizzes · Built for React/JS developers')}
+          {path
+            ? `${path.moduleCount} ${t('home.modules', 'modules')} · ${path.lessonCount} ${t('home.lessons', 'lessons')}`
+            : ''}
         </p>
       </motion.div>
     </div>

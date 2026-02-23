@@ -8,8 +8,8 @@ export function LoginBrandingPanel() {
   return (
     <div className="relative flex flex-1 items-center justify-center overflow-hidden px-12 py-16">
       {/* Atmospheric blobs */}
-      <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-java/5 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-js/5 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-accent/5 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-accent/5 blur-3xl" />
 
       <motion.div
         variants={staggerContainer}
@@ -22,13 +22,13 @@ export function LoginBrandingPanel() {
           variants={staggerItem}
           className="font-display text-display-xl font-bold text-text-primary"
         >
-          Think in Java, build like a pro.
+          Learn by comparison.
         </motion.h1>
 
-        {/* Decorative gradient rule */}
+        {/* Decorative accent rule */}
         <motion.div
           variants={staggerItem}
-          className="mt-6 h-0.5 w-20 rounded-full bg-gradient-to-r from-java to-js/40"
+          className="mt-6 h-0.5 w-20 rounded-full bg-accent"
         />
 
         {/* Subtitle */}
@@ -36,7 +36,7 @@ export function LoginBrandingPanel() {
           variants={staggerItem}
           className="mt-6 text-base leading-relaxed text-text-secondary"
         >
-          Master Java by building on what you already know from JavaScript.
+          Master new languages and frameworks by building on what you already know.
           Every concept, side by side.
         </motion.p>
 
@@ -55,9 +55,9 @@ export function LoginBrandingPanel() {
         >
           {/* JavaScript side */}
           <div className="overflow-hidden rounded-xl border border-border-subtle">
-            <div className="flex items-center gap-2 border-b border-js/20 bg-js-muted px-3 py-1.5">
+            <div className="flex items-center gap-2 border-b border-border-subtle bg-surface-2 px-3 py-1.5">
               <span className="h-2 w-2 rounded-full bg-js" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-js-dark">
+              <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
                 JavaScript
               </span>
             </div>
@@ -88,9 +88,9 @@ export function LoginBrandingPanel() {
 
           {/* Java side */}
           <div className="overflow-hidden rounded-xl border border-border-subtle">
-            <div className="flex items-center gap-2 border-b border-java/20 bg-java-glow px-3 py-1.5">
+            <div className="flex items-center gap-2 border-b border-border-subtle bg-surface-2 px-3 py-1.5">
               <span className="h-2 w-2 rounded-full bg-java" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-java">
+              <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
                 Java
               </span>
             </div>

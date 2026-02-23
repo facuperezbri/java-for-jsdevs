@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Trophy, CheckCircle2, XCircle, RotateCcw, ChevronRight, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +9,6 @@ import { motion } from 'framer-motion';
 import Confetti from 'react-confetti';
 import type { Module, QuizQuestion } from '../../types';
 import { Button } from '../ui/Button';
-import { useCurriculum } from '../../data/curriculum';
 import { cn } from '../../lib/utils';
 import { springScale, staggerContainer, staggerItem } from '../../lib/motion';
 
@@ -19,16 +19,21 @@ interface QuizResultsProps {
   questions: QuizQuestion[];
   module: Module;
   onRetry: () => void;
+  curriculum?: Module[];
 }
 
-export function QuizResults({ score, totalQuestions, answers, questions, module, onRetry }: QuizResultsProps) {
-  const { CURRICULUM } = useCurriculum();
+export function QuizResults({ score, totalQuestions, answers, questions, module, onRetry, curriculum }: QuizResultsProps) {
   const { t } = useTranslation();
+  const pathname = usePathname();
   const passed = score >= 60;
   const perfect = score === 100;
   const correct = Math.round((score / 100) * totalQuestions);
 
-  const nextModule = CURRICULUM.find((m) => m.order === module.order + 1);
+  // Extract pathId from URL
+  const pathMatch = pathname.match(/\/path\/([^/]+)/);
+  const pathId = pathMatch?.[1] ?? 'java';
+
+  const nextModule = curriculum?.find((m) => m.order === module.order + 1);
 
   const [windowDimensions, setWindowDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
 
@@ -51,8 +56,8 @@ export function QuizResults({ score, totalQuestions, answers, questions, module,
         variants={springScale}
         className={cn(
           'rounded-2xl border p-8 text-center mb-8 relative overflow-hidden',
-          passed ? 'bg-module-green/5 border-module-green/20 shadow-editorial' : 'bg-surface-1 border-border-subtle shadow-editorial',
-          perfect && 'border-amber-400 shadow-glow-yellow'
+          passed ? 'bg-module-green/5 border-module-green/20' : 'bg-surface-1 border-border-subtle',
+          perfect && 'border-amber-400'
         )}
       >
         {perfect && (
@@ -82,7 +87,7 @@ export function QuizResults({ score, totalQuestions, answers, questions, module,
           <div className="flex items-center justify-center gap-2 text-module-green relative z-10">
             <CheckCircle2 size={18} />
             <span className="font-semibold">
-              {nextModule ? `${nextModule.title} ${t('quizResults.unlocked', 'unlocked!')}` : t('quizResults.courseComplete', 'Course complete!')}
+              {nextModule ? `${nextModule.title} ${t('quizResults.unlocked', 'unlocked!')}` : t('quizResults.courseComplete', 'Path complete!')}
             </span>
           </div>
         ) : (
@@ -105,7 +110,7 @@ export function QuizResults({ score, totalQuestions, answers, questions, module,
 
           return (
             <motion.div key={q.id} variants={staggerItem} className={cn(
-              'p-4 rounded-xl border shadow-editorial',
+              'p-4 rounded-xl border',
               isCorrect ? 'bg-module-green/5 border-module-green/20' : 'bg-module-red/5 border-module-red/20'
             )}>
               <div className="flex items-start gap-3">
@@ -136,21 +141,21 @@ export function QuizResults({ score, totalQuestions, answers, questions, module,
         </Button>
 
         {passed && nextModule ? (
-          <Link href={`/module/${nextModule.id}`}>
+          <Link href={`/path/${pathId}/module/${nextModule.id}`}>
             <Button>
               {t('quizResults.start', 'Start')} {nextModule.title}
               <ChevronRight size={16} />
             </Button>
           </Link>
         ) : passed ? (
-          <Link href="/">
+          <Link href={`/path/${pathId}`}>
             <Button>
               {t('quizResults.backHome', 'Back to home')}
               <ChevronRight size={16} />
             </Button>
           </Link>
         ) : (
-          <Link href={`/module/${module.id}`}>
+          <Link href={`/path/${pathId}/module/${module.id}`}>
             <Button variant="secondary">
               {t('quizResults.reviewLessons', 'Review lessons')}
             </Button>

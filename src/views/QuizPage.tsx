@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence } from 'framer-motion';
-import { useCurriculum } from '../data/curriculum';
+import { usePathCurriculum } from '../data/curriculum';
 import { useProgress } from '../context/ProgressContext';
 import { isModuleUnlocked } from '../lib/utils';
 import { QuizProgress } from '../components/quiz/QuizProgress';
@@ -15,10 +15,11 @@ import { ChevronLeft } from 'lucide-react';
 type Phase = 'answering' | 'results';
 
 interface QuizPageProps {
+  pathId: string;
   moduleId: string;
 }
 
-export function QuizPage({ moduleId }: QuizPageProps) {
+export function QuizPage({ pathId, moduleId }: QuizPageProps) {
   const router = useRouter();
   const { progress, saveQuizAttempt, setLastVisited } = useProgress();
 
@@ -27,31 +28,31 @@ export function QuizPage({ moduleId }: QuizPageProps) {
   const [phase, setPhase] = useState<Phase>('answering');
   const [finalScore, setFinalScore] = useState(0);
 
-  const { CURRICULUM, getModule, getQuiz } = useCurriculum();
+  const { CURRICULUM, getModule, getQuiz } = usePathCurriculum(pathId);
 
   const module = getModule(moduleId ?? '');
   const quiz = module ? getQuiz(module.quizId) : undefined;
 
-  const unlocked = module ? isModuleUnlocked(module.order, CURRICULUM, progress) : false;
+  const unlocked = module ? isModuleUnlocked(module.order, CURRICULUM, progress, pathId) : false;
   const allLessonsComplete = module
-    ? (progress.modules[module.id]?.completedLessonIds.length ?? 0) >= module.lessons.length
+    ? (progress.paths[pathId]?.modules[module.id]?.completedLessonIds.length ?? 0) >= module.lessons.length
     : false;
 
   useEffect(() => {
     if (!module) {
-      router.replace('/');
+      router.replace(`/path/${pathId}`);
       return;
     }
     if (!quiz) {
-      router.replace(`/module/${moduleId}`);
+      router.replace(`/path/${pathId}/module/${moduleId}`);
       return;
     }
     if (!unlocked || !allLessonsComplete) {
-      router.replace(`/module/${moduleId}`);
+      router.replace(`/path/${pathId}/module/${moduleId}`);
       return;
     }
-    setLastVisited(`/module/${moduleId}/quiz`, moduleId);
-  }, [moduleId, module, quiz, unlocked, allLessonsComplete, router, setLastVisited]);
+    setLastVisited(`/path/${pathId}/module/${moduleId}/quiz`, pathId, moduleId);
+  }, [moduleId, module, quiz, unlocked, allLessonsComplete, router, setLastVisited, pathId]);
 
   if (!module || !quiz || !unlocked || !allLessonsComplete) return null;
 
@@ -65,7 +66,7 @@ export function QuizPage({ moduleId }: QuizPageProps) {
       const correct = quiz!.questions.filter((q) => newAnswers[q.id] === q.correctKey).length;
       const score = Math.round((correct / quiz!.questions.length) * 100);
       setFinalScore(score);
-      saveQuizAttempt(module!.id, {
+      saveQuizAttempt(pathId, module!.id, {
         quizId: quiz!.id,
         score,
         completedAt: new Date().toISOString(),
@@ -89,7 +90,7 @@ export function QuizPage({ moduleId }: QuizPageProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <Link
-          href={`/module/${moduleId}`}
+          href={`/path/${pathId}/module/${moduleId}`}
           className="flex items-center gap-1.5 text-sm text-text-tertiary hover:text-text-primary transition-colors"
         >
           <ChevronLeft size={16} />
@@ -130,6 +131,7 @@ export function QuizPage({ moduleId }: QuizPageProps) {
           questions={quiz.questions}
           module={module}
           onRetry={handleRetry}
+          curriculum={CURRICULUM}
         />
       )}
     </div>

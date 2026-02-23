@@ -171,7 +171,7 @@ export function ChatWidget() {
         onClick={() => setIsOpen((o) => !o)}
         className={cn(
           'fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg',
-          'bg-java text-white hover:bg-java-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-java focus-visible:ring-offset-2 focus-visible:ring-offset-page-bg'
+          'bg-accent text-white hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-page-bg'
         )}
         aria-label={isOpen ? t('chat.ariaCloseChat') : t('chat.ariaOpenChat')}
         whileHover={{ scale: 1.05 }}
@@ -239,7 +239,7 @@ export function ChatWidget() {
                   className={cn(
                     'rounded-lg px-3 py-2 text-sm',
                     m.role === 'user'
-                      ? 'ml-8 bg-java/10 text-text-primary'
+                      ? 'ml-8 bg-accent/10 text-text-primary'
                       : 'mr-8 bg-surface-2 text-text-primary'
                   )}
                 >
