@@ -58,7 +58,7 @@ export function useLesson(moduleId: string | undefined, lessonId: string | undef
   const overallProgress = useMemo(() => {
     const totalLessons = CURRICULUM.reduce((sum, m) => sum + m.lessons.length, 0);
     const completedLessons = CURRICULUM.reduce((sum, m) => {
-      return sum + (progress.modules[m.id]?.completedLessonIds.length ?? 0);
+      return sum + (progress.modules?.[m.id]?.completedLessonIds?.length ?? 0);
     }, 0);
     return totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
   }, [progress, CURRICULUM]);

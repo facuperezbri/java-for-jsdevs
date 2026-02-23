@@ -18,7 +18,7 @@ export function RoadmapHero() {
 
   const totalLessons = CURRICULUM.reduce((s, m) => s + m.lessons.length, 0);
   const completedLessons = CURRICULUM.reduce(
-    (s, m) => s + (progress.modules[m.id]?.completedLessonIds.length ?? 0),
+    (s, m) => s + (progress.modules?.[m.id]?.completedLessonIds?.length ?? 0),
     0
   );
   const overallPercent = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
@@ -31,7 +31,7 @@ export function RoadmapHero() {
     // Find first incomplete lesson
     for (const mod of CURRICULUM) {
       for (const lesson of mod.lessons) {
-        const done = progress.modules[mod.id]?.completedLessonIds.includes(lesson.id);
+        const done = progress.modules?.[mod.id]?.completedLessonIds?.includes(lesson.id);
         if (!done) {
           router.push(`/module/${mod.id}/lesson/${lesson.id}`);
           return;

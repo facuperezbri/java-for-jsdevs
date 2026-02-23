@@ -12,7 +12,11 @@ function loadFromStorage(): AppProgress {
   if (typeof window === 'undefined') return defaultProgress;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as AppProgress) : defaultProgress;
+    const parsed = raw ? (JSON.parse(raw) as Partial<AppProgress>) : {};
+    return {
+      modules: parsed.modules ?? {},
+      lastVisitedPath: parsed.lastVisitedPath,
+    };
   } catch {
     return defaultProgress;
   }
@@ -77,8 +81,12 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
           if (!cancelled) setLoaded(true);
           return;
         }
-        const data = (await res.json()) as AppProgress;
-        if (!cancelled) setProgress(data);
+        const data = (await res.json()) as Partial<AppProgress>;
+        if (!cancelled)
+          setProgress({
+            modules: data.modules ?? {},
+            lastVisitedPath: data.lastVisitedPath,
+          });
       } catch {
         setProgress(loadFromStorage());
       } finally {

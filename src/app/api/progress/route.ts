@@ -25,8 +25,12 @@ export async function GET() {
       .where(eq(userProgress.clerkUserId, userId))
       .limit(1);
 
-    const progress: AppProgress = row[0]?.progress
-      ? (row[0].progress as AppProgress)
+    const raw = row[0]?.progress;
+    const progress: AppProgress = raw
+      ? {
+          modules: (raw as AppProgress).modules ?? {},
+          lastVisitedPath: (raw as AppProgress).lastVisitedPath,
+        }
       : { modules: {} };
 
     return NextResponse.json(progress);

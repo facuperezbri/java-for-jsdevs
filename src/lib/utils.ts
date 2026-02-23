@@ -56,7 +56,7 @@ export function isModuleUnlocked(
   if (order === 1) return true;
   const prev = allModules.find((m) => m.order === order - 1);
   if (!prev) return false;
-  const attempts = progress.modules[prev.id]?.quizAttempts ?? [];
+  const attempts = progress.modules?.[prev.id]?.quizAttempts ?? [];
   return attempts.length > 0 && Math.max(...attempts.map((a) => a.score)) >= 60;
 }
 
@@ -64,8 +64,8 @@ export function getModuleProgress(
   module: Module,
   progress: AppProgress
 ): { completed: number; total: number; percent: number } {
-  const mp = progress.modules[module.id];
-  const completed = mp?.completedLessonIds.length ?? 0;
+  const mp = progress.modules?.[module.id];
+  const completed = mp?.completedLessonIds?.length ?? 0;
   const total = module.lessons.length;
   return { completed, total, percent: total > 0 ? (completed / total) * 100 : 0 };
 }
@@ -74,7 +74,7 @@ export function getBestQuizScore(
   moduleId: string,
   progress: AppProgress
 ): number | null {
-  const attempts = progress.modules[moduleId]?.quizAttempts ?? [];
+  const attempts = progress.modules?.[moduleId]?.quizAttempts ?? [];
   if (attempts.length === 0) return null;
   return Math.max(...attempts.map((a) => a.score));
 }
@@ -92,8 +92,8 @@ export function getProjectProgress(
   project: MiniProject,
   progress: AppProgress
 ): { completed: number; total: number; percent: number } {
-  const pp = progress.modules[moduleId]?.projectProgress;
-  const completed = pp?.completedStepIds.length ?? 0;
+  const pp = progress.modules?.[moduleId]?.projectProgress;
+  const completed = pp?.completedStepIds?.length ?? 0;
   const total = project.steps.length;
   return { completed, total, percent: total > 0 ? (completed / total) * 100 : 0 };
 }

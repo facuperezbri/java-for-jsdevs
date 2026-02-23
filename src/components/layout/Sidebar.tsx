@@ -27,7 +27,7 @@ export function Sidebar({ onClose }: SidebarProps) {
 
   const totalLessons = CURRICULUM.reduce((s, m) => s + m.lessons.length, 0);
   const completedLessons = CURRICULUM.reduce(
-    (s, m) => s + (progress.modules[m.id]?.completedLessonIds.length ?? 0),
+    (s, m) => s + (progress.modules?.[m.id]?.completedLessonIds?.length ?? 0),
     0
   );
   const overallPercent = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
@@ -138,7 +138,7 @@ export function Sidebar({ onClose }: SidebarProps) {
               {isActiveModule && unlocked && (
                 <div className="ml-4 mt-1 mb-2 space-y-0.5">
                   {mod.lessons.map((lesson) => {
-                    const isLessonComplete = progress.modules[mod.id]?.completedLessonIds.includes(lesson.id);
+                    const isLessonComplete = progress.modules?.[mod.id]?.completedLessonIds?.includes(lesson.id);
                     const isActiveLesson = lessonId === lesson.id;
                     return (
                       <Link
